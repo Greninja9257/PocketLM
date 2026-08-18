@@ -1,0 +1,6 @@
+# Training and evaluation
+torch>=2.2
+numpy>=1.24
+
+# Optional: only needed for scripts/distill.py (teacher-generated data)
+# anthropic>=0.40

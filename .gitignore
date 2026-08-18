@@ -1,0 +1,18 @@
+# vscode AI rules
+.github/instructions/codacy.instructions.md
+
+__pycache__/
+*.pyc
+.venv/
+
+# Training checkpoints and logs. The portable .npz exports are committed
+# instead — they carry weights, tokenizer and config in one file and run
+# without torch.
+checkpoints/*.pt
+checkpoints/*.log
+eval/results/
+
+# The bootstrap corpus is generated deterministically from a seed:
+#   make data      (scripts/build_corpus.py --seed 7)
+# 21 MB of slot-filled templates is not worth versioning; the generator is.
+data/
