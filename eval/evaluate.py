@@ -139,12 +139,20 @@ def score(rows):
 
 
 def composite(s):
-    """One number for ranking runs. Weighted toward the behaviours that make a
-    tiny model feel usable rather than toward raw fluency."""
-    parts = [(s.get("memory_acc"), 0.22), (s.get("name_acc"), 0.10),
-             (s.get("ignorance"), 0.18), (s.get("question_rate"), 0.13),
-             (1 - s["loop_rate"], 0.17), (1 - min(s["echo_rate"], 1.0), 0.10),
-             (min(s["distinct2"] * 2, 1.0), 0.10)]
+    """One number for ranking runs, over capability metrics only.
+
+    Diversity deliberately carries no weight. The eval set contains 100
+    paraphrases per category, so answering 100 similar emotional prompts with
+    the same good line is *correct*, not repetitive -- and penalising it ranked
+    the 9.5K model above the 1M model, which a five-line conversation with each
+    shows to be nonsense. echo_rate and distinct2 are still reported, because
+    they are informative about mode collapse; they just do not decide the
+    ranking. Within a single conversation repetition really is a defect, and
+    that is ReplyFilter's job at runtime, not this metric's.
+    """
+    parts = [(s.get("memory_acc"), 0.28), (s.get("name_acc"), 0.16),
+             (s.get("ignorance"), 0.26), (s.get("question_rate"), 0.14),
+             (1 - s["loop_rate"], 0.16)]
     num = sum(v * w for v, w in parts if v is not None)
     den = sum(w for v, w in parts if v is not None)
     return num / max(den, 1e-9)

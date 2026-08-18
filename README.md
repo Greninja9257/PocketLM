@@ -270,6 +270,90 @@ alternatives are defined at the *same* budget, tokenizer and data:
 make train-variants && make bakeoff
 ```
 
+
+---
+
+## Results
+
+All seven models, same corpus, same curriculum, scored on the 900 held-out
+prompts. Trained models ship as `checkpoints/*.pocketlm.npz` and run without
+torch.
+
+| model | params | composite | name_acc | ignorance | question | memory | echo | distinct2 | on disk |
+|---|---|---|---|---|---|---|---|---|---|
+| `1k` | 984 | 0.226 | 0% | 0% | 47% | 0% | 7% | 0.96 | 4.8 KB |
+| `5k` | 4,944 | 0.246 | 13% | 0% | 46% | 0% | 19% | 0.67 | 14.5 KB |
+| `10k` | 9,584 | 0.408 | 51% | 34% | 56% | 0% | 43% | 0.45 | 25.4 KB |
+| `50k` | 48,416 | 0.352 | 54% | 17% | 44% | 0% | 59% | 0.25 | 97.9 KB |
+| `100k` | 95,664 | 0.374 | 55% | 23% | 48% | 0% | 60% | 0.24 | 184.4 KB |
+| **`500k`** | 491,040 | **0.504** | **79%** | **69%** | 27% | 0% | 68% | 0.18 | 897.6 KB |
+| `1m` | 968,320 | 0.399 | 52% | 37% | 43% | 0% | 71% | 0.15 | 1.75 MB |
+
+The same conversation at three sizes, which is the clearest way to read the
+table:
+
+```
+                10k                        500k / 1m
+you > hey
+    hey there — PocketLM.          hey! I'm PocketLM.
+you > I'm having a rough day
+    oohy dards up noter me.        ah, that sucks. want to tell me what happened?
+you > tell me a joke
+    nice. doing anything fun today? why did the scarecrow win an award?
+you > what's the capital of Chad?
+    no idea, honestly. sorry!      I don't know that one. want to ask me something else?
+```
+
+### What the numbers actually say
+
+**Scaling works, up to a point.** `name_acc` climbs 0% -> 13% -> 51% -> 79%, and
+`ignorance` (declining to invent an answer) climbs 0% -> 69%. The 1K model
+produces English-shaped noise; `500k` holds a real short conversation.
+
+**`1m` is undertrained, not worse.** It has the lowest dialogue perplexity of
+the family (1.3) but runs at `STEPS_SCALE` 0.35 -- 4,375 steps against `500k`'s
+6,250. Its eval scores regress accordingly. This is a budget decision in
+`config.py`, not a property of the architecture, and it is the first thing to
+change if you want a better 1M model.
+
+**Memory copying never emerges — at any size.** `memory_acc` is 0% for all
+seven. The diagnostic explains why: given a fact in context, the model copies
+in-distribution values 4/8 but held-out values 0/8. It has learned *"answer a
+colour question with a colour"* rather than *"read the value out of the `<mem>`
+line"*. The tokenizer compounds it: `teal` is 2 tokens, `turquoise` is 7, so a
+held-out value demands sustained verbatim copying across many positions.
+
+The fix is a data property, not a size one. Training values are drawn from
+pools of 38 colours / 34 foods / 33 names — small enough to memorise, so the
+model is never forced to learn the copy operation. Genuinely unbounded values
+(random strings) would make copying the only way to reduce the loss. Until
+that changes, external memory reliably drives the *shape* of an answer and not
+its content.
+
+**Bigger models repeat themselves more** — `echo_rate` rises 7% -> 71% and
+`distinct2` falls 0.96 -> 0.15. That is mode collapse onto a templated corpus:
+with a few hundred distinct assistant lines to learn, the best strategy is to
+emit the single most likely one. It is a fact about the corpus, not the models,
+and it is why `distinct2` carries no weight in the composite (see below).
+
+**Phase 1 is thrown away.** Language perplexity after training runs from 49
+(`1k`) to 2.8e8 (`10k`) — phases 2-4 never revisit plain text, so the model
+catastrophically forgets it. For a chatbot that is mostly harmless, but it does
+mean the 2,000 language steps buy less than they appear to.
+
+### A metric that was wrong
+
+The composite originally weighted `echo_rate` and `distinct2` at 20% combined,
+and ranked `10k` **above** `1m` and `500k`. Five turns of conversation with
+each model shows that to be nonsense. The eval set contains 100 paraphrases per
+category, so answering 100 similar emotional prompts with the same good line is
+correct behaviour, not repetition — penalising it rewards incoherence, because
+noise is always diverse.
+
+Diversity is now reported but carries no weight in the ranking. Repetition
+*within a single conversation* is a real defect, and `ReplyFilter` handles it at
+runtime, which is the right place.
+
 ---
 
 ## Data: read this before trusting the models
