@@ -230,6 +230,52 @@ def gen_memory_fact(rng) -> Sample:
     return "memory", memory, turns
 
 
+def gen_name_contrast(rng) -> Sample:
+    """"What's my name" and "what's your name" in the same conversation.
+
+    Boosting identity training taught the model that any question containing
+    "name" is answered "PocketLM" -- it answered "what's my name?" wrongly 4
+    times in 8. The corpus had only 9 conversations containing both phrasings,
+    so there was nothing to learn the distinction from. These make the contrast
+    explicit and adjacent.
+    """
+    user = _one(rng, MEM_NAMES)
+    memory = format_facts({"name": user, "favorite_color": _one(rng, MEM_COLORS)})
+    mine = [("what's my name?", f"you're {user}."), ("who am I?", f"{user}."),
+            ("say my name", f"{user}, of course."), ("do you know my name?", f"yes — {user}.")]
+    yours = [("what's your name?", f"I'm {NAME}!"), ("and yours?", f"{NAME}."),
+             ("what are you called?", f"{NAME}."), ("what's your name then?", f"I'm {NAME}.")]
+    mq, ma = _one(rng, mine)
+    yq, ya = _one(rng, yours)
+    turns = ([u(mq), a(ma), u(yq), a(ya)] if rng.random() < 0.5
+             else [u(yq), a(ya), u(mq), a(ma)])
+    if rng.random() < 0.4:
+        turns += [u(_one(rng, ["nice", "cool", "got it", "right"])),
+                  a(_one(rng, ["anything else?", "what's next?", "ask me something."]))]
+    return "memory", memory, turns
+
+
+def gen_memory_single(rng) -> Sample:
+    """One fact in memory, one question about it, nothing else in the way.
+
+    The easiest possible version of the copy operation: the value to copy is a
+    handful of tokens away from the question. Chained conversations can put the
+    <mem> line a dozen turns from the question that needs it, which is a lot to
+    ask of a model this narrow.
+    """
+    key, question, pool = _one(rng, [
+        ("favorite_color", "what's my favorite color?", MEM_COLORS),
+        ("favorite_food", "what's my favorite food?", MEM_FOODS),
+        ("name", "what's my name?", MEM_NAMES),
+        ("hobby", "what's my hobby?", MEM_HOBBIES),
+        ("likes", "what do I like?", MEM_ANIMALS),
+    ])
+    value = _one(rng, pool)
+    answer = (f"you're {value}." if key == "name"
+              else _one(rng, [f"{value}.", f"{value}!", f"{value}, you said."]))
+    return "memory", format_facts({key: value}), [u(question), a(answer)]
+
+
 def gen_memory_absent(rng) -> Sample:
     """Symmetric and just as important: nothing in memory means say so."""
     name = _one(rng, MEM_NAMES)
@@ -411,20 +457,26 @@ DIALOGUE_MIX: List[Tuple[Callable, float]] = [
     (gen_emotion_good, 1.0), (gen_followup, 1.4), (gen_explain, 0.9),
     (gen_preference, 1.1), (gen_joke, 0.9), (gen_goodbye, 0.8),
     (gen_identity, 1.6), (gen_named_greeting, 0.8),
-    (gen_memory_fact, 2.2), (gen_memory_absent, 0.7),
+    (gen_memory_fact, 1.8), (gen_memory_single, 1.6),
+    (gen_name_contrast, 1.4), (gen_memory_absent, 0.7),
     (gen_dont_know, 0.8), (gen_clarify, 0.8), (gen_adversarial, 0.5),
 ]
 BEHAVIOR_MIX: List[Tuple[Callable, float]] = [
     (gen_identity, 1.5), (gen_named_greeting, 1.0),
     (gen_followup, 2.0), (gen_clarify, 2.0), (gen_dont_know, 2.0),
     (gen_memory_absent, 1.5), (gen_adversarial, 1.5), (gen_joke, 1.2),
-    (gen_emotion_bad, 1.2), (gen_explain, 1.0), (gen_memory_fact, 2.5),
+    (gen_emotion_bad, 1.2), (gen_explain, 1.0), (gen_memory_fact, 2.0), (gen_memory_single, 2.0),
+    (gen_name_contrast, 2.0),
 ]
 PERSONALITY_MIX: List[Tuple[Callable, float]] = [
-    (gen_identity, 4.0), (gen_named_greeting, 2.0), (gen_greeting, 1.2), (gen_emotion_bad, 1.2),
+    (gen_identity, 3.0), (gen_name_contrast, 2.0), (gen_named_greeting, 1.5),
+    (gen_greeting, 1.2), (gen_emotion_bad, 1.2),
     (gen_joke, 1.0), (gen_preference, 1.0), (gen_dont_know, 1.0),
     (gen_followup, 1.0), (gen_goodbye, 0.8),
 ]
+
+
+NO_CHAIN = set()          # populated below with the memory generators
 
 
 def chain(rng: random.Random, mix, min_turns: int = 6, max_turns: int = 14) -> Sample:
@@ -434,8 +486,8 @@ def chain(rng: random.Random, mix, min_turns: int = 6, max_turns: int = 14) -> S
     exactly turn 5 because it has never seen one. Real chats wander between
     topics, so chaining scenarios is also a fair imitation of what happens.
     """
-    gens = [g for g, _ in mix]
-    weights = [w for _, w in mix]
+    gens = [g for g, _ in mix if g not in NO_CHAIN]
+    weights = [w for g, w in mix if g not in NO_CHAIN]
     turns: Turns = []
     memory, categories = None, []
     target = rng.randint(min_turns, max_turns)
@@ -449,6 +501,9 @@ def chain(rng: random.Random, mix, min_turns: int = 6, max_turns: int = 14) -> S
         categories.append(category)
         turns.extend(seg)
     return "+".join(dict.fromkeys(categories)), memory, turns
+
+
+NO_CHAIN.update({gen_memory_fact, gen_memory_single, gen_name_contrast, gen_memory_absent})
 
 
 def sample_split(rng: random.Random, mix, n: int, label: str = "",
