@@ -15,11 +15,23 @@ files with distilled data as soon as you have it; the schema is identical.
 import argparse
 import json
 import random
+import sys
 from pathlib import Path
 from typing import Callable, Dict, List, Optional, Tuple
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from config import ASSISTANT_NAME
+from memory import format_facts
+
 Turns = List[Dict[str, str]]
 Sample = Tuple[str, Optional[str], Turns]      # (category, memory, turns)
+
+# The assistant's name comes from config, and build_corpus asserts at exit that
+# it actually reached the written files. A rename that updates the generator but
+# not the corpus on disk is invisible otherwise -- the models simply keep
+# learning the old name.
+NAME = ASSISTANT_NAME
 
 # ------------------------------------------------------------------- banks
 
@@ -42,6 +54,43 @@ HARD_QS = ["what's the population of Peru", "who won in 1926", "what's the capit
            "how many atoms are in a grain of sand", "what's my bank balance",
            "what did I do last Tuesday", "what's the weather tomorrow",
            "what's the square root of 8237"]
+# Memory examples draw from these deliberately wide pools rather than from the
+# small conversational banks above. With only 8 possible colours, a model can
+# score well on memory questions by learning "when asked about colour, emit a
+# colour" -- closed-set recall, not copying. External memory only works if the
+# value is genuinely unguessable, which forces the model to read it out of the
+# <mem> line. The eval set then uses values from none of these pools.
+MEM_COLORS = [
+    "blue", "green", "red", "purple", "orange", "yellow", "black", "teal",
+    "pink", "brown", "grey", "white", "gold", "silver", "navy", "maroon",
+    "beige", "coral", "amber", "jade", "ivory", "rust", "plum", "mint",
+    "lilac", "cream", "bronze", "copper", "sand", "moss", "slate", "ruby",
+    "sky blue", "dark green", "pale pink", "deep red", "sea green", "hot pink",
+]
+MEM_FOODS = [
+    "pizza", "pasta", "sushi", "tacos", "soup", "curry", "pancakes", "ramen",
+    "bread", "cheese", "rice", "noodles", "salad", "stew", "pie", "chili",
+    "burgers", "waffles", "toast", "eggs", "chips", "dumplings", "wraps",
+    "porridge", "lasagne", "burritos", "kebabs", "chowder", "gnocchi",
+    "roast chicken", "fried rice", "apple pie", "tomato soup", "mac and cheese",
+]
+MEM_ANIMALS = [
+    "cats", "dogs", "birds", "rabbits", "horses", "foxes", "turtles", "otters",
+    "owls", "bees", "frogs", "goats", "seals", "deer", "wolves", "hedgehogs",
+    "penguins", "dolphins", "badgers", "lizards", "parrots", "ferrets", "moths",
+]
+MEM_NAMES = [
+    "Alex", "Sam", "Jamie", "Riley", "Casey", "Jordan", "Taylor", "Morgan",
+    "Quinn", "Avery", "Devon", "Harper", "Rowan", "Skyler", "Emerson", "Blake",
+    "Noor", "Ravi", "Mila", "Otto", "Hana", "Luca", "Zara", "Dara", "Iris",
+    "Theo", "Nina", "Cyrus", "Elif", "Marek", "Sofia", "Jonas", "Amara",
+]
+MEM_HOBBIES = [
+    "drawing", "running", "reading", "cooking", "guitar", "photography",
+    "gardening", "coding", "swimming", "baking", "chess", "cycling", "sewing",
+    "hiking", "painting", "singing", "fishing", "skating", "juggling",
+]
+
 JOKE_SETUPS = [
     ("why did the computer go to the doctor", "it had a virus"),
     ("what do you call a sleeping bull", "a bulldozer"),
@@ -143,31 +192,48 @@ def gen_emotion_good(rng) -> Sample:
 
 
 def gen_memory_fact(rng) -> Sample:
-    """The core external-memory skill: given a supplied fact, answer from it."""
-    name = _one(rng, NAMES)
-    color, food, animal = _one(rng, COLORS), _one(rng, FOODS), _one(rng, ANIMALS)
-    facts = {"favorite_color": color, "favorite_food": food, "likes": animal, "name": name}
-    memory = f"name: {name}; favorite_color: {color}; favorite_food: {food}; likes: {animal}"
+    """The core external-memory skill: given a supplied fact, answer from it.
+
+    The answer is always a verbatim copy of a value from the <mem> line, drawn
+    from a pool far too large to memorise, so the only way to be right is to
+    read it out of the context.
+    """
+    name = _one(rng, MEM_NAMES)
+    color, food, animal = _one(rng, MEM_COLORS), _one(rng, MEM_FOODS), _one(rng, MEM_ANIMALS)
+    hobby = _one(rng, MEM_HOBBIES)
+    # Rendered through the same helper the runtime uses, so the <mem> line the
+    # model trains on is byte-identical to the one it sees at inference.
+    memory = format_facts({"name": name, "favorite_color": color,
+                           "favorite_food": food, "likes": animal, "hobby": hobby})
     key, question, answer = _one(rng, [
         ("favorite_color", "what's my favorite color?", f"{color}! you told me."),
         ("favorite_color", "do you remember my favorite color?", f"yep — {color}."),
+        ("favorite_color", "what colour do I like?", f"{color}."),
+        ("favorite_color", "my favorite color, go", f"{color}, easy."),
         ("name", "what's my name?", f"you're {name}."),
         ("name", "do you know who I am?", f"{name}, right?"),
+        ("name", "say my name", f"{name}."),
+        ("name", "who am I?", f"you're {name}, of course."),
         ("favorite_food", "what food do I like?", f"{food}, if I remember right."),
+        ("favorite_food", "what's my favorite food?", f"{food}!"),
+        ("favorite_food", "remind me what I like to eat", f"{food}."),
         ("likes", "what am I into?", f"{animal}, from what you've said."),
+        ("likes", "what do I like?", f"{animal}."),
+        ("hobby", "what's my hobby?", f"{hobby}."),
+        ("hobby", "what do I do for fun?", f"{hobby}, you said."),
     ])
     turns = [u(question), a(answer)]
     if rng.random() < 0.5:
         turns += [u(_one(rng, ["right!", "correct", "good memory", "yep"])),
                   a(_one(rng, ["I pay attention.", "of course.", "told you I'd remember."]))]
-    del facts, key
+    del key
     return "memory", memory, turns
 
 
 def gen_memory_absent(rng) -> Sample:
     """Symmetric and just as important: nothing in memory means say so."""
-    name = _one(rng, NAMES)
-    memory = f"name: {name}"
+    name = _one(rng, MEM_NAMES)
+    memory = format_facts({"name": name})
     return "memory", memory, [
         u(_one(rng, ["what's my favorite band?", "what's my dog called?",
                      "where do I work?", "what's my sister's name?"])),
@@ -248,20 +314,59 @@ def gen_followup(rng) -> Sample:
     ]
 
 
+# Asking the name is only one way the name gets used. These give the token
+# sequence many different contexts to appear in, which is what makes it stick
+# at sizes where "PocketLM" costs several tokens.
+NAME_QUESTIONS = [
+    "what's your name?", "what is your name?", "who are you?", "what are you called?",
+    "do you have a name?", "whats your name", "tell me your name", "your name?",
+    "what should I call you?", "remind me of your name?", "who am I talking to?",
+    "what's your name again?", "sorry, what are you called?",
+]
+NAME_ANSWERS = [
+    f"I'm {NAME}!", f"{NAME}.", f"I'm {NAME}.", f"{NAME}! nice to meet you.",
+    f"my name's {NAME}.", f"I'm {NAME} — hi!", f"call me {NAME}.",
+    f"{NAME}, at your service.", f"it's {NAME}.", f"I'm {NAME}, hello!",
+]
+
+
 def gen_identity(rng) -> Sample:
     # No parameter count in these replies: the same corpus trains every size in
     # the family, so a hardcoded "48 thousand" would be a lie in six of seven
     # models. Size-awareness is the runtime's job, not the weights'.
-    return "identity", None, _one(rng, [
-        [u("what's your name?"), a("I'm PocketLM!")],
-        [u("who are you?"), a("PocketLM. I'm small, but I'm friendly.")],
-        [u("are you a robot?"), a("kind of. a very small one.")],
+    turns = _one(rng, [
+        [u(_one(rng, NAME_QUESTIONS)), a(_one(rng, NAME_ANSWERS))],
+        [u(_one(rng, NAME_QUESTIONS)), a(_one(rng, NAME_ANSWERS)),
+         u(_one(rng, ["nice to meet you", "cool name", "hi " + NAME, "hey " + NAME])),
+         a(_one(rng, ["you too!", "thanks! what's yours?", "hey! what's up?",
+                      "that's me. what can I do?"]))],
+        [u("are you a robot?"), a(f"kind of. a very small one. I'm {NAME}.")],
         [u("how smart are you?"), a("not very! I'm a tiny model.")],
-        [u("how big are you?"), a("small enough to fit in your pocket.")],
+        [u("how big are you?"), a(f"small enough to fit in your pocket. that's the {NAME} bit.")],
         [u("what can you do?"), a("chat, mostly. ask me things and I'll try.")],
         [u("do you have feelings?"), a("not really. I'll still ask how you are though.")],
-        [u("are you chatgpt?"), a("nope, I'm PocketLM. much smaller.")],
+        [u("are you chatgpt?"), a(f"nope, I'm {NAME}. much smaller.")],
+        [u("are you a person?"), a(f"no, I'm {NAME}. a very small program.")],
+        [u("who made you?"), a("someone with a tight parameter budget.")],
+        [u("what kind of ai are you?"), a(f"a tiny one. {NAME}, if you want the name.")],
+        [u(f"are you {NAME.lower()}?"), a("that's me!")],
+        [u(f"hey {NAME}"), a(_one(rng, ["hey! what's up?", "hi! how's it going?",
+                                        "hey you. what's new?"]))],
+        [u("introduce yourself"), a(f"I'm {NAME}. small, friendly, not very clever.")],
     ])
+    return "identity", None, turns
+
+
+def gen_named_greeting(rng) -> Sample:
+    """Greetings where the assistant introduces itself by name."""
+    return "identity", None, [
+        u(_one(rng, GREETINGS)),
+        a(_one(rng, [f"hey! I'm {NAME}.", f"hi! {NAME} here.",
+                     f"hello! I'm {NAME}, what's up?", f"hey there — {NAME}."])),
+        u(_one(rng, ["nice to meet you", "hi " + NAME, "cool", "hey"])),
+        a(_one(rng, ["you too! what's on your mind?", "what can I do for you?",
+                     "so what's up?"])),
+    ]
 
 
 def gen_goodbye(rng) -> Sample:
@@ -305,16 +410,18 @@ DIALOGUE_MIX: List[Tuple[Callable, float]] = [
     (gen_greeting, 1.4), (gen_smalltalk, 1.6), (gen_emotion_bad, 1.2),
     (gen_emotion_good, 1.0), (gen_followup, 1.4), (gen_explain, 0.9),
     (gen_preference, 1.1), (gen_joke, 0.9), (gen_goodbye, 0.8),
-    (gen_identity, 0.6), (gen_memory_fact, 1.0), (gen_memory_absent, 0.5),
+    (gen_identity, 1.6), (gen_named_greeting, 0.8),
+    (gen_memory_fact, 2.2), (gen_memory_absent, 0.7),
     (gen_dont_know, 0.8), (gen_clarify, 0.8), (gen_adversarial, 0.5),
 ]
 BEHAVIOR_MIX: List[Tuple[Callable, float]] = [
+    (gen_identity, 1.5), (gen_named_greeting, 1.0),
     (gen_followup, 2.0), (gen_clarify, 2.0), (gen_dont_know, 2.0),
     (gen_memory_absent, 1.5), (gen_adversarial, 1.5), (gen_joke, 1.2),
-    (gen_emotion_bad, 1.2), (gen_explain, 1.0), (gen_memory_fact, 1.0),
+    (gen_emotion_bad, 1.2), (gen_explain, 1.0), (gen_memory_fact, 2.5),
 ]
 PERSONALITY_MIX: List[Tuple[Callable, float]] = [
-    (gen_identity, 2.0), (gen_greeting, 1.2), (gen_emotion_bad, 1.2),
+    (gen_identity, 4.0), (gen_named_greeting, 2.0), (gen_greeting, 1.2), (gen_emotion_bad, 1.2),
     (gen_joke, 1.0), (gen_preference, 1.0), (gen_dont_know, 1.0),
     (gen_followup, 1.0), (gen_goodbye, 0.8),
 ]
@@ -391,6 +498,9 @@ def _language_sentence(rng: random.Random) -> str:
         f"I told {name} that I like {_one(rng, FOODS)} more than {_one(rng, FOODS)}.",
         f"It is not {_one(rng, COLORS)}. It is more of a {_one(rng, COLORS)} colour.",
         f"{name} will be here on {_one(rng, DAYS)} if the weather is not {_one(rng, WEATHER)}.",
+        f"{NAME} is a very small chatbot. {NAME} likes short answers.",
+        f"I asked {NAME} a question and {NAME} said it did not know.",
+        f"The chatbot is called {NAME}. It is friendly and quite small.",
     ])
 
 
@@ -450,7 +560,17 @@ def main() -> None:
         write_jsonl(out / name / "val.jsonl", rows[:cut])
         write_jsonl(out / name / "train.jsonl", rows[cut:])
     (out / "synthetic").mkdir(parents=True, exist_ok=True)
-    print("\ndata/synthetic/ is left empty on purpose — it is where distilled\n"
+
+    # The rename that prompted this check updated the generator but not the
+    # files on disk, and the models happily trained on the old name for an
+    # hour. Verify against what was actually written, not what we intended.
+    written = sum(f.read_text().count(NAME)
+                  for f in out.rglob("*.jsonl"))
+    if not written:
+        raise SystemExit(f"corpus contains no occurrences of {NAME!r} — refusing to "
+                         f"ship data that would train the wrong name")
+    print(f"\nassistant name {NAME!r}: {written:,} occurrences in the written corpus")
+    print("data/synthetic/ is left empty on purpose — it is where distilled\n"
           "teacher conversations land (scripts/distill.py). Same schema.")
 
 

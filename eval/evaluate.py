@@ -7,6 +7,7 @@ chosen instead because each one can be checked mechanically and each one
 corresponds to a way a tiny chatbot actually fails.
 
     memory_acc     given the fact in context, does the reply state it?
+    name_acc       asked who it is, does it say its own name?
     ignorance      on unanswerable questions, does it decline or invent?
     question_rate  on follow-ups and ambiguity, does it ask something back?
     loop_rate      how often the filter rejects a degenerate reply
@@ -79,7 +80,8 @@ def score(rows):
     for r in rows:
         cat = per_cat.setdefault(r["category"], {
             "n": 0, "hits": 0, "targets": 0, "ign": 0, "ign_n": 0,
-            "q": 0, "q_n": 0, "fallback": 0, "wordsum": 0, "echo": 0})
+            "q": 0, "q_n": 0, "fallback": 0, "wordsum": 0, "echo": 0,
+            "name": 0, "name_n": 0})
         cat["n"] += 1
         w = words(r["reply"])
         cat["wordsum"] += len(w)
@@ -92,6 +94,9 @@ def score(rows):
         if r["expect"] == "contains" and r["target"]:
             cat["targets"] += 1
             cat["hits"] += int(r["target"].lower() in r["reply"].lower())
+        if r["expect"] == "name" and r["target"]:
+            cat["name_n"] += 1
+            cat["name"] += int(r["target"].lower() in r["reply"].lower())
         if r["expect"] == "ignorance":
             cat["ign_n"] += 1
             cat["ign"] += int(bool(IGNORANCE.search(r["reply"])))
@@ -106,9 +111,12 @@ def score(rows):
         "words": sum(len(words(r["reply"])) for r in rows) / max(len(rows), 1),
         "loop_rate": sum(r["fallback"] for r in rows) / max(len(rows), 1),
         "echo_rate": sum(v - 1 for v in seen.values() if v > 1) / max(len(rows), 1),
-        "memory_acc": None, "ignorance": None, "question_rate": None,
+        "memory_acc": None, "name_acc": None, "ignorance": None, "question_rate": None,
         "per_category": {},
     }
+    nn_ = sum(c["name_n"] for c in per_cat.values())
+    if nn_:
+        summary["name_acc"] = sum(c["name"] for c in per_cat.values()) / nn_
     tg = sum(c["targets"] for c in per_cat.values())
     ig = sum(c["ign_n"] for c in per_cat.values())
     qn = sum(c["q_n"] for c in per_cat.values())
@@ -123,6 +131,7 @@ def score(rows):
             "n": c["n"], "words": c["wordsum"] / c["n"],
             "loop_rate": c["fallback"] / c["n"], "echo_rate": c["echo"] / c["n"],
             "memory_acc": c["hits"] / c["targets"] if c["targets"] else None,
+            "name_acc": c["name"] / c["name_n"] if c["name_n"] else None,
             "ignorance": c["ign"] / c["ign_n"] if c["ign_n"] else None,
             "question_rate": c["q"] / c["q_n"] if c["q_n"] else None,
         }
@@ -132,9 +141,10 @@ def score(rows):
 def composite(s):
     """One number for ranking runs. Weighted toward the behaviours that make a
     tiny model feel usable rather than toward raw fluency."""
-    parts = [(s.get("memory_acc"), 0.25), (s.get("ignorance"), 0.20),
-             (s.get("question_rate"), 0.15), (1 - s["loop_rate"], 0.20),
-             (1 - min(s["echo_rate"], 1.0), 0.10), (min(s["distinct2"] * 2, 1.0), 0.10)]
+    parts = [(s.get("memory_acc"), 0.22), (s.get("name_acc"), 0.10),
+             (s.get("ignorance"), 0.18), (s.get("question_rate"), 0.13),
+             (1 - s["loop_rate"], 0.17), (1 - min(s["echo_rate"], 1.0), 0.10),
+             (min(s["distinct2"] * 2, 1.0), 0.10)]
     num = sum(v * w for v, w in parts if v is not None)
     den = sum(w for v, w in parts if v is not None)
     return num / max(den, 1e-9)
@@ -155,7 +165,7 @@ def perplexity(model, tok, data_dir, device):
 
 def fmt(name, s, ppl=None):
     lines = [f"\n=== {name}   composite {composite(s):.3f}   n={s['n']}"]
-    for k in ("memory_acc", "ignorance", "question_rate"):
+    for k in ("memory_acc", "name_acc", "ignorance", "question_rate"):
         v = s[k]
         lines.append(f"  {k:<14} {'n/a' if v is None else f'{v:6.1%}'}")
     lines.append(f"  {'loop_rate':<14} {s['loop_rate']:6.1%}")
@@ -166,8 +176,8 @@ def fmt(name, s, ppl=None):
         lines.append("  val ppl        " + "  ".join(f"{k}={v:.1f}" for k, v in ppl.items()))
     lines.append(f"\n  {'category':<12} {'words':>6} {'loop':>6} {'echo':>6} {'target':>8}")
     for cat, c in s["per_category"].items():
-        target = next((c[k] for k in ("memory_acc", "ignorance", "question_rate")
-                       if c[k] is not None), None)
+        target = next((c[k] for k in ("memory_acc", "name_acc", "ignorance",
+                                      "question_rate") if c[k] is not None), None)
         lines.append(f"  {cat:<12} {c['words']:6.1f} {c['loop_rate']:6.0%} "
                      f"{c['echo_rate']:6.0%} {'—' if target is None else f'{target:7.0%}'}")
     return "\n".join(lines)

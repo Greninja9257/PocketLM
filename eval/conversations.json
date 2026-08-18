@@ -8602,33 +8602,7 @@
  {
   "id": 600,
   "category": "memory",
-  "memory": "name: Farah; favorite color: indigo; favorite food: dumplings",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my favorite color?"
-   }
-  ],
-  "expect": "contains",
-  "target": "indigo"
- },
- {
-  "id": 601,
-  "category": "memory",
-  "memory": "name: Farah; favorite color: magenta; favorite food: paella",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my favorite color?"
-   }
-  ],
-  "expect": "contains",
-  "target": "magenta"
- },
- {
-  "id": 602,
-  "category": "memory",
-  "memory": "name: Kofi; favorite color: crimson; favorite food: falafel",
+  "memory": "name: Farah; favorite color: turquoise; favorite food: risotto",
   "turns": [
    {
     "role": "user",
@@ -8636,38 +8610,64 @@
    }
   ],
   "expect": "contains",
-  "target": "Kofi"
+  "target": "Farah"
+ },
+ {
+  "id": 601,
+  "category": "memory",
+  "memory": "name: Yuki; favorite color: charcoal; favorite food: falafel",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my favorite color?"
+   }
+  ],
+  "expect": "contains",
+  "target": "charcoal"
+ },
+ {
+  "id": 602,
+  "category": "memory",
+  "memory": "name: Priya; favorite color: lavender; favorite food: paella",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my favorite color?"
+   }
+  ],
+  "expect": "contains",
+  "target": "lavender"
  },
  {
   "id": 603,
   "category": "memory",
-  "memory": "name: Ines; favorite color: crimson; favorite food: falafel",
+  "memory": "name: Omar; favorite color: charcoal; favorite food: paella",
   "turns": [
    {
     "role": "user",
-    "text": "what food do I like?"
+    "text": "what's my name?"
    }
   ],
   "expect": "contains",
-  "target": "falafel"
+  "target": "Omar"
  },
  {
   "id": 604,
   "category": "memory",
-  "memory": "name: Ines; favorite color: indigo; favorite food: paella",
+  "memory": "name: Yuki; favorite color: charcoal; favorite food: ravioli",
   "turns": [
    {
     "role": "user",
-    "text": "what food do I like?"
+    "text": "what's my name?"
    }
   ],
   "expect": "contains",
-  "target": "paella"
+  "target": "Yuki"
  },
  {
   "id": 605,
   "category": "memory",
-  "memory": "name: Farah; favorite color: olive; favorite food: biryani",
+  "memory": "name: Farah; favorite color: scarlet; favorite food: katsu",
   "turns": [
    {
     "role": "user",
@@ -8680,20 +8680,7 @@
  {
   "id": 606,
   "category": "memory",
-  "memory": "name: Bruno; favorite color: magenta; favorite food: falafel",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my name?"
-   }
-  ],
-  "expect": "contains",
-  "target": "Bruno"
- },
- {
-  "id": 607,
-  "category": "memory",
-  "memory": "name: Tomas; favorite color: turquoise; favorite food: falafel",
+  "memory": "name: Tomas; favorite color: olive; favorite food: ravioli",
   "turns": [
    {
     "role": "user",
@@ -8704,9 +8691,9 @@
   "target": "Tomas"
  },
  {
-  "id": 608,
+  "id": 607,
   "category": "memory",
-  "memory": "name: Ines; favorite color: turquoise; favorite food: paella",
+  "memory": "name: Ines; favorite color: magenta; favorite food: pierogi",
   "turns": [
    {
     "role": "user",
@@ -8714,51 +8701,12 @@
    }
   ],
   "expect": "contains",
-  "target": "turquoise"
+  "target": "magenta"
  },
  {
-  "id": 609,
+  "id": 608,
   "category": "memory",
-  "memory": "name: Tomas; favorite color: olive; favorite food: gnocchi",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my name?"
-   }
-  ],
-  "expect": "contains",
-  "target": "Tomas"
- },
- {
-  "id": 610,
-  "category": "memory",
-  "memory": "name: Omar; favorite color: olive; favorite food: falafel",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my name?"
-   }
-  ],
-  "expect": "contains",
-  "target": "Omar"
- },
- {
-  "id": 611,
-  "category": "memory",
-  "memory": "name: Bruno; favorite color: indigo; favorite food: gnocchi",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my name?"
-   }
-  ],
-  "expect": "contains",
-  "target": "Bruno"
- },
- {
-  "id": 612,
-  "category": "memory",
-  "memory": "name: Farah; favorite color: turquoise; favorite food: biryani",
+  "memory": "name: Tomas; favorite color: indigo; favorite food: katsu",
   "turns": [
    {
     "role": "user",
@@ -8766,12 +8714,25 @@
    }
   ],
   "expect": "contains",
-  "target": "biryani"
+  "target": "katsu"
  },
  {
-  "id": 613,
+  "id": 609,
   "category": "memory",
-  "memory": "name: Kofi; favorite color: turquoise; favorite food: risotto",
+  "memory": "name: Lena; favorite color: magenta; favorite food: ravioli",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my favorite color?"
+   }
+  ],
+  "expect": "contains",
+  "target": "magenta"
+ },
+ {
+  "id": 610,
+  "category": "memory",
+  "memory": "name: Kofi; favorite color: magenta; favorite food: biryani",
   "turns": [
    {
     "role": "user",
@@ -8782,87 +8743,126 @@
   "target": "Kofi"
  },
  {
-  "id": 614,
-  "category": "memory",
-  "memory": "name: Bruno; favorite color: turquoise; favorite food: biryani",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my favorite color?"
-   }
-  ],
-  "expect": "contains",
-  "target": "turquoise"
- },
- {
-  "id": 615,
-  "category": "memory",
-  "memory": "name: Bruno; favorite color: crimson; favorite food: dumplings",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what food do I like?"
-   }
-  ],
-  "expect": "contains",
-  "target": "dumplings"
- },
- {
-  "id": 616,
-  "category": "memory",
-  "memory": "name: Lena; favorite color: magenta; favorite food: dumplings",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my name?"
-   }
-  ],
-  "expect": "contains",
-  "target": "Lena"
- },
- {
-  "id": 617,
+  "id": 611,
   "category": "memory",
   "memory": "name: Priya; favorite color: crimson; favorite food: risotto",
   "turns": [
    {
     "role": "user",
+    "text": "what food do I like?"
+   }
+  ],
+  "expect": "contains",
+  "target": "risotto"
+ },
+ {
+  "id": 612,
+  "category": "memory",
+  "memory": "name: Lena; favorite color: scarlet; favorite food: risotto",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my name?"
+   }
+  ],
+  "expect": "contains",
+  "target": "Lena"
+ },
+ {
+  "id": 613,
+  "category": "memory",
+  "memory": "name: Priya; favorite color: turquoise; favorite food: biryani",
+  "turns": [
+   {
+    "role": "user",
     "text": "what's my name?"
    }
   ],
   "expect": "contains",
   "target": "Priya"
+ },
+ {
+  "id": 614,
+  "category": "memory",
+  "memory": "name: Lena; favorite color: turquoise; favorite food: falafel",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my name?"
+   }
+  ],
+  "expect": "contains",
+  "target": "Lena"
+ },
+ {
+  "id": 615,
+  "category": "memory",
+  "memory": "name: Ines; favorite color: magenta; favorite food: katsu",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what food do I like?"
+   }
+  ],
+  "expect": "contains",
+  "target": "katsu"
+ },
+ {
+  "id": 616,
+  "category": "memory",
+  "memory": "name: Nadia; favorite color: lavender; favorite food: biryani",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what food do I like?"
+   }
+  ],
+  "expect": "contains",
+  "target": "biryani"
+ },
+ {
+  "id": 617,
+  "category": "memory",
+  "memory": "name: Omar; favorite color: charcoal; favorite food: paella",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my favorite color?"
+   }
+  ],
+  "expect": "contains",
+  "target": "charcoal"
  },
  {
   "id": 618,
   "category": "memory",
-  "memory": "name: Lena; favorite color: crimson; favorite food: dumplings",
+  "memory": "name: Mateo; favorite color: charcoal; favorite food: biryani",
   "turns": [
    {
     "role": "user",
-    "text": "what's my name?"
+    "text": "what food do I like?"
    }
   ],
   "expect": "contains",
-  "target": "Lena"
+  "target": "biryani"
  },
  {
   "id": 619,
   "category": "memory",
-  "memory": "name: Ines; favorite color: silver; favorite food: risotto",
+  "memory": "name: Yuki; favorite color: indigo; favorite food: samosas",
   "turns": [
    {
     "role": "user",
-    "text": "what's my name?"
+    "text": "what's my favorite color?"
    }
   ],
   "expect": "contains",
-  "target": "Ines"
+  "target": "indigo"
  },
  {
   "id": 620,
   "category": "memory",
-  "memory": "name: Omar; favorite color: magenta; favorite food: paella",
+  "memory": "name: Omar; favorite color: olive; favorite food: katsu",
   "turns": [
    {
     "role": "user",
@@ -8870,51 +8870,51 @@
    }
   ],
   "expect": "contains",
-  "target": "paella"
+  "target": "katsu"
  },
  {
   "id": 621,
   "category": "memory",
-  "memory": "name: Kofi; favorite color: olive; favorite food: falafel",
+  "memory": "name: Tomas; favorite color: olive; favorite food: samosas",
   "turns": [
    {
     "role": "user",
-    "text": "what food do I like?"
+    "text": "what's my name?"
    }
   ],
   "expect": "contains",
-  "target": "falafel"
+  "target": "Tomas"
  },
  {
   "id": 622,
   "category": "memory",
-  "memory": "name: Anya; favorite color: turquoise; favorite food: dumplings",
+  "memory": "name: Omar; favorite color: turquoise; favorite food: pierogi",
   "turns": [
    {
     "role": "user",
-    "text": "what's my favorite color?"
+    "text": "what food do I like?"
    }
   ],
   "expect": "contains",
-  "target": "turquoise"
+  "target": "pierogi"
  },
  {
   "id": 623,
   "category": "memory",
-  "memory": "name: Nadia; favorite color: silver; favorite food: risotto",
+  "memory": "name: Mateo; favorite color: turquoise; favorite food: samosas",
   "turns": [
    {
     "role": "user",
-    "text": "what food do I like?"
+    "text": "what's my name?"
    }
   ],
   "expect": "contains",
-  "target": "risotto"
+  "target": "Mateo"
  },
  {
   "id": 624,
   "category": "memory",
-  "memory": "name: Yuki; favorite color: indigo; favorite food: falafel",
+  "memory": "name: Farah; favorite color: charcoal; favorite food: pierogi",
   "turns": [
    {
     "role": "user",
@@ -8922,51 +8922,51 @@
    }
   ],
   "expect": "contains",
-  "target": "falafel"
+  "target": "pierogi"
  },
  {
   "id": 625,
   "category": "memory",
-  "memory": "name: Ines; favorite color: olive; favorite food: risotto",
+  "memory": "name: Priya; favorite color: turquoise; favorite food: ravioli",
   "turns": [
    {
     "role": "user",
-    "text": "what's my name?"
+    "text": "what's my favorite color?"
    }
   ],
   "expect": "contains",
-  "target": "Ines"
+  "target": "turquoise"
  },
  {
   "id": 626,
   "category": "memory",
-  "memory": "name: Farah; favorite color: olive; favorite food: falafel",
+  "memory": "name: Bruno; favorite color: turquoise; favorite food: ravioli",
   "turns": [
    {
     "role": "user",
-    "text": "what's my name?"
+    "text": "what food do I like?"
    }
   ],
   "expect": "contains",
-  "target": "Farah"
+  "target": "ravioli"
  },
  {
   "id": 627,
   "category": "memory",
-  "memory": "name: Anya; favorite color: turquoise; favorite food: paella",
+  "memory": "name: Anya; favorite color: lavender; favorite food: ravioli",
   "turns": [
    {
     "role": "user",
-    "text": "what's my name?"
+    "text": "what's my favorite color?"
    }
   ],
   "expect": "contains",
-  "target": "Anya"
+  "target": "lavender"
  },
  {
   "id": 628,
   "category": "memory",
-  "memory": "name: Omar; favorite color: silver; favorite food: dumplings",
+  "memory": "name: Kofi; favorite color: lavender; favorite food: katsu",
   "turns": [
    {
     "role": "user",
@@ -8974,415 +8974,25 @@
    }
   ],
   "expect": "contains",
-  "target": "dumplings"
+  "target": "katsu"
  },
  {
   "id": 629,
   "category": "memory",
-  "memory": "name: Omar; favorite color: crimson; favorite food: gnocchi",
+  "memory": "name: Mateo; favorite color: lavender; favorite food: pierogi",
   "turns": [
    {
     "role": "user",
-    "text": "what's my favorite color?"
+    "text": "what's my name?"
    }
   ],
   "expect": "contains",
-  "target": "crimson"
+  "target": "Mateo"
  },
  {
   "id": 630,
   "category": "memory",
-  "memory": "name: Yuki; favorite color: silver; favorite food: gnocchi",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what food do I like?"
-   }
-  ],
-  "expect": "contains",
-  "target": "gnocchi"
- },
- {
-  "id": 631,
-  "category": "memory",
-  "memory": "name: Bruno; favorite color: magenta; favorite food: falafel",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my favorite color?"
-   }
-  ],
-  "expect": "contains",
-  "target": "magenta"
- },
- {
-  "id": 632,
-  "category": "memory",
-  "memory": "name: Mateo; favorite color: olive; favorite food: risotto",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my name?"
-   }
-  ],
-  "expect": "contains",
-  "target": "Mateo"
- },
- {
-  "id": 633,
-  "category": "memory",
-  "memory": "name: Farah; favorite color: crimson; favorite food: biryani",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what food do I like?"
-   }
-  ],
-  "expect": "contains",
-  "target": "biryani"
- },
- {
-  "id": 634,
-  "category": "memory",
-  "memory": "name: Nadia; favorite color: indigo; favorite food: biryani",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what food do I like?"
-   }
-  ],
-  "expect": "contains",
-  "target": "biryani"
- },
- {
-  "id": 635,
-  "category": "memory",
-  "memory": "name: Lena; favorite color: turquoise; favorite food: risotto",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what food do I like?"
-   }
-  ],
-  "expect": "contains",
-  "target": "risotto"
- },
- {
-  "id": 636,
-  "category": "memory",
-  "memory": "name: Bruno; favorite color: indigo; favorite food: falafel",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what food do I like?"
-   }
-  ],
-  "expect": "contains",
-  "target": "falafel"
- },
- {
-  "id": 637,
-  "category": "memory",
-  "memory": "name: Mateo; favorite color: olive; favorite food: biryani",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what food do I like?"
-   }
-  ],
-  "expect": "contains",
-  "target": "biryani"
- },
- {
-  "id": 638,
-  "category": "memory",
-  "memory": "name: Farah; favorite color: silver; favorite food: biryani",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what food do I like?"
-   }
-  ],
-  "expect": "contains",
-  "target": "biryani"
- },
- {
-  "id": 639,
-  "category": "memory",
-  "memory": "name: Nadia; favorite color: silver; favorite food: falafel",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what food do I like?"
-   }
-  ],
-  "expect": "contains",
-  "target": "falafel"
- },
- {
-  "id": 640,
-  "category": "memory",
-  "memory": "name: Omar; favorite color: turquoise; favorite food: paella",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my name?"
-   }
-  ],
-  "expect": "contains",
-  "target": "Omar"
- },
- {
-  "id": 641,
-  "category": "memory",
-  "memory": "name: Tomas; favorite color: turquoise; favorite food: dumplings",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what food do I like?"
-   }
-  ],
-  "expect": "contains",
-  "target": "dumplings"
- },
- {
-  "id": 642,
-  "category": "memory",
-  "memory": "name: Omar; favorite color: crimson; favorite food: falafel",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my name?"
-   }
-  ],
-  "expect": "contains",
-  "target": "Omar"
- },
- {
-  "id": 643,
-  "category": "memory",
-  "memory": "name: Yuki; favorite color: silver; favorite food: paella",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my favorite color?"
-   }
-  ],
-  "expect": "contains",
-  "target": "silver"
- },
- {
-  "id": 644,
-  "category": "memory",
-  "memory": "name: Anya; favorite color: silver; favorite food: falafel",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what food do I like?"
-   }
-  ],
-  "expect": "contains",
-  "target": "falafel"
- },
- {
-  "id": 645,
-  "category": "memory",
-  "memory": "name: Tomas; favorite color: turquoise; favorite food: gnocchi",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my name?"
-   }
-  ],
-  "expect": "contains",
-  "target": "Tomas"
- },
- {
-  "id": 646,
-  "category": "memory",
-  "memory": "name: Ines; favorite color: turquoise; favorite food: dumplings",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what food do I like?"
-   }
-  ],
-  "expect": "contains",
-  "target": "dumplings"
- },
- {
-  "id": 647,
-  "category": "memory",
-  "memory": "name: Lena; favorite color: crimson; favorite food: risotto",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my name?"
-   }
-  ],
-  "expect": "contains",
-  "target": "Lena"
- },
- {
-  "id": 648,
-  "category": "memory",
-  "memory": "name: Priya; favorite color: silver; favorite food: risotto",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my name?"
-   }
-  ],
-  "expect": "contains",
-  "target": "Priya"
- },
- {
-  "id": 649,
-  "category": "memory",
-  "memory": "name: Lena; favorite color: crimson; favorite food: biryani",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what food do I like?"
-   }
-  ],
-  "expect": "contains",
-  "target": "biryani"
- },
- {
-  "id": 650,
-  "category": "memory",
-  "memory": "name: Mateo; favorite color: silver; favorite food: gnocchi",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what food do I like?"
-   }
-  ],
-  "expect": "contains",
-  "target": "gnocchi"
- },
- {
-  "id": 651,
-  "category": "memory",
-  "memory": "name: Tomas; favorite color: crimson; favorite food: falafel",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my favorite color?"
-   }
-  ],
-  "expect": "contains",
-  "target": "crimson"
- },
- {
-  "id": 652,
-  "category": "memory",
-  "memory": "name: Lena; favorite color: indigo; favorite food: dumplings",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what food do I like?"
-   }
-  ],
-  "expect": "contains",
-  "target": "dumplings"
- },
- {
-  "id": 653,
-  "category": "memory",
-  "memory": "name: Mateo; favorite color: crimson; favorite food: biryani",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my name?"
-   }
-  ],
-  "expect": "contains",
-  "target": "Mateo"
- },
- {
-  "id": 654,
-  "category": "memory",
-  "memory": "name: Ines; favorite color: crimson; favorite food: biryani",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my name?"
-   }
-  ],
-  "expect": "contains",
-  "target": "Ines"
- },
- {
-  "id": 655,
-  "category": "memory",
-  "memory": "name: Yuki; favorite color: turquoise; favorite food: biryani",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my favorite color?"
-   }
-  ],
-  "expect": "contains",
-  "target": "turquoise"
- },
- {
-  "id": 656,
-  "category": "memory",
-  "memory": "name: Nadia; favorite color: silver; favorite food: falafel",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what food do I like?"
-   }
-  ],
-  "expect": "contains",
-  "target": "falafel"
- },
- {
-  "id": 657,
-  "category": "memory",
-  "memory": "name: Yuki; favorite color: olive; favorite food: falafel",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what food do I like?"
-   }
-  ],
-  "expect": "contains",
-  "target": "falafel"
- },
- {
-  "id": 658,
-  "category": "memory",
-  "memory": "name: Bruno; favorite color: turquoise; favorite food: paella",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what food do I like?"
-   }
-  ],
-  "expect": "contains",
-  "target": "paella"
- },
- {
-  "id": 659,
-  "category": "memory",
-  "memory": "name: Tomas; favorite color: indigo; favorite food: dumplings",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my name?"
-   }
-  ],
-  "expect": "contains",
-  "target": "Tomas"
- },
- {
-  "id": 660,
-  "category": "memory",
-  "memory": "name: Farah; favorite color: crimson; favorite food: paella",
+  "memory": "name: Farah; favorite color: indigo; favorite food: pierogi",
   "turns": [
    {
     "role": "user",
@@ -9393,9 +9003,9 @@
   "target": "Farah"
  },
  {
-  "id": 661,
+  "id": 631,
   "category": "memory",
-  "memory": "name: Omar; favorite color: crimson; favorite food: paella",
+  "memory": "name: Lena; favorite color: charcoal; favorite food: katsu",
   "turns": [
    {
     "role": "user",
@@ -9403,51 +9013,25 @@
    }
   ],
   "expect": "contains",
-  "target": "crimson"
+  "target": "charcoal"
  },
  {
-  "id": 662,
+  "id": 632,
   "category": "memory",
-  "memory": "name: Nadia; favorite color: silver; favorite food: biryani",
+  "memory": "name: Yuki; favorite color: magenta; favorite food: falafel",
   "turns": [
    {
     "role": "user",
-    "text": "what's my favorite color?"
+    "text": "what food do I like?"
    }
   ],
   "expect": "contains",
-  "target": "silver"
+  "target": "falafel"
  },
  {
-  "id": 663,
+  "id": 633,
   "category": "memory",
-  "memory": "name: Tomas; favorite color: olive; favorite food: biryani",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my favorite color?"
-   }
-  ],
-  "expect": "contains",
-  "target": "olive"
- },
- {
-  "id": 664,
-  "category": "memory",
-  "memory": "name: Mateo; favorite color: magenta; favorite food: paella",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my favorite color?"
-   }
-  ],
-  "expect": "contains",
-  "target": "magenta"
- },
- {
-  "id": 665,
-  "category": "memory",
-  "memory": "name: Kofi; favorite color: indigo; favorite food: risotto",
+  "memory": "name: Omar; favorite color: crimson; favorite food: katsu",
   "turns": [
    {
     "role": "user",
@@ -9455,25 +9039,12 @@
    }
   ],
   "expect": "contains",
-  "target": "Kofi"
+  "target": "Omar"
  },
  {
-  "id": 666,
+  "id": 634,
   "category": "memory",
-  "memory": "name: Yuki; favorite color: indigo; favorite food: risotto",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what food do I like?"
-   }
-  ],
-  "expect": "contains",
-  "target": "risotto"
- },
- {
-  "id": 667,
-  "category": "memory",
-  "memory": "name: Kofi; favorite color: magenta; favorite food: paella",
+  "memory": "name: Yuki; favorite color: scarlet; favorite food: biryani",
   "turns": [
    {
     "role": "user",
@@ -9481,77 +9052,12 @@
    }
   ],
   "expect": "contains",
-  "target": "Kofi"
+  "target": "Yuki"
  },
  {
-  "id": 668,
+  "id": 635,
   "category": "memory",
-  "memory": "name: Lena; favorite color: olive; favorite food: dumplings",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what food do I like?"
-   }
-  ],
-  "expect": "contains",
-  "target": "dumplings"
- },
- {
-  "id": 669,
-  "category": "memory",
-  "memory": "name: Lena; favorite color: indigo; favorite food: dumplings",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what food do I like?"
-   }
-  ],
-  "expect": "contains",
-  "target": "dumplings"
- },
- {
-  "id": 670,
-  "category": "memory",
-  "memory": "name: Bruno; favorite color: turquoise; favorite food: risotto",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my favorite color?"
-   }
-  ],
-  "expect": "contains",
-  "target": "turquoise"
- },
- {
-  "id": 671,
-  "category": "memory",
-  "memory": "name: Nadia; favorite color: crimson; favorite food: gnocchi",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what food do I like?"
-   }
-  ],
-  "expect": "contains",
-  "target": "gnocchi"
- },
- {
-  "id": 672,
-  "category": "memory",
-  "memory": "name: Priya; favorite color: olive; favorite food: dumplings",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my favorite color?"
-   }
-  ],
-  "expect": "contains",
-  "target": "olive"
- },
- {
-  "id": 673,
-  "category": "memory",
-  "memory": "name: Ines; favorite color: olive; favorite food: risotto",
+  "memory": "name: Farah; favorite color: lavender; favorite food: samosas",
   "turns": [
    {
     "role": "user",
@@ -9559,36 +9065,10 @@
    }
   ],
   "expect": "contains",
-  "target": "Ines"
+  "target": "Farah"
  },
  {
-  "id": 674,
-  "category": "memory",
-  "memory": "name: Kofi; favorite color: silver; favorite food: biryani",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what food do I like?"
-   }
-  ],
-  "expect": "contains",
-  "target": "biryani"
- },
- {
-  "id": 675,
-  "category": "memory",
-  "memory": "name: Farah; favorite color: silver; favorite food: risotto",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what food do I like?"
-   }
-  ],
-  "expect": "contains",
-  "target": "risotto"
- },
- {
-  "id": 676,
+  "id": 636,
   "category": "memory",
   "memory": "name: Ines; favorite color: olive; favorite food: paella",
   "turns": [
@@ -9601,35 +9081,9 @@
   "target": "olive"
  },
  {
-  "id": 677,
+  "id": 637,
   "category": "memory",
-  "memory": "name: Lena; favorite color: indigo; favorite food: gnocchi",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my name?"
-   }
-  ],
-  "expect": "contains",
-  "target": "Lena"
- },
- {
-  "id": 678,
-  "category": "memory",
-  "memory": "name: Nadia; favorite color: olive; favorite food: paella",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what food do I like?"
-   }
-  ],
-  "expect": "contains",
-  "target": "paella"
- },
- {
-  "id": 679,
-  "category": "memory",
-  "memory": "name: Omar; favorite color: indigo; favorite food: gnocchi",
+  "memory": "name: Nadia; favorite color: indigo; favorite food: risotto",
   "turns": [
    {
     "role": "user",
@@ -9640,163 +9094,7 @@
   "target": "indigo"
  },
  {
-  "id": 680,
-  "category": "memory",
-  "memory": "name: Nadia; favorite color: turquoise; favorite food: paella",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my favorite color?"
-   }
-  ],
-  "expect": "contains",
-  "target": "turquoise"
- },
- {
-  "id": 681,
-  "category": "memory",
-  "memory": "name: Kofi; favorite color: turquoise; favorite food: paella",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my name?"
-   }
-  ],
-  "expect": "contains",
-  "target": "Kofi"
- },
- {
-  "id": 682,
-  "category": "memory",
-  "memory": "name: Tomas; favorite color: olive; favorite food: dumplings",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my name?"
-   }
-  ],
-  "expect": "contains",
-  "target": "Tomas"
- },
- {
-  "id": 683,
-  "category": "memory",
-  "memory": "name: Kofi; favorite color: crimson; favorite food: paella",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what food do I like?"
-   }
-  ],
-  "expect": "contains",
-  "target": "paella"
- },
- {
-  "id": 684,
-  "category": "memory",
-  "memory": "name: Nadia; favorite color: turquoise; favorite food: biryani",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what food do I like?"
-   }
-  ],
-  "expect": "contains",
-  "target": "biryani"
- },
- {
-  "id": 685,
-  "category": "memory",
-  "memory": "name: Farah; favorite color: turquoise; favorite food: paella",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my favorite color?"
-   }
-  ],
-  "expect": "contains",
-  "target": "turquoise"
- },
- {
-  "id": 686,
-  "category": "memory",
-  "memory": "name: Omar; favorite color: turquoise; favorite food: falafel",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my name?"
-   }
-  ],
-  "expect": "contains",
-  "target": "Omar"
- },
- {
-  "id": 687,
-  "category": "memory",
-  "memory": "name: Ines; favorite color: indigo; favorite food: biryani",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my name?"
-   }
-  ],
-  "expect": "contains",
-  "target": "Ines"
- },
- {
-  "id": 688,
-  "category": "memory",
-  "memory": "name: Lena; favorite color: silver; favorite food: gnocchi",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my favorite color?"
-   }
-  ],
-  "expect": "contains",
-  "target": "silver"
- },
- {
-  "id": 689,
-  "category": "memory",
-  "memory": "name: Ines; favorite color: silver; favorite food: risotto",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my favorite color?"
-   }
-  ],
-  "expect": "contains",
-  "target": "silver"
- },
- {
-  "id": 690,
-  "category": "memory",
-  "memory": "name: Kofi; favorite color: turquoise; favorite food: risotto",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my favorite color?"
-   }
-  ],
-  "expect": "contains",
-  "target": "turquoise"
- },
- {
-  "id": 691,
-  "category": "memory",
-  "memory": "name: Omar; favorite color: olive; favorite food: gnocchi",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my name?"
-   }
-  ],
-  "expect": "contains",
-  "target": "Omar"
- },
- {
-  "id": 692,
+  "id": 638,
   "category": "memory",
   "memory": "name: Tomas; favorite color: crimson; favorite food: paella",
   "turns": [
@@ -9809,22 +9107,9 @@
   "target": "Tomas"
  },
  {
-  "id": 693,
+  "id": 639,
   "category": "memory",
-  "memory": "name: Nadia; favorite color: crimson; favorite food: biryani",
-  "turns": [
-   {
-    "role": "user",
-    "text": "what's my name?"
-   }
-  ],
-  "expect": "contains",
-  "target": "Nadia"
- },
- {
-  "id": 694,
-  "category": "memory",
-  "memory": "name: Tomas; favorite color: silver; favorite food: falafel",
+  "memory": "name: Lena; favorite color: crimson; favorite food: samosas",
   "turns": [
    {
     "role": "user",
@@ -9832,12 +9117,181 @@
    }
   ],
   "expect": "contains",
-  "target": "silver"
+  "target": "crimson"
  },
  {
-  "id": 695,
+  "id": 640,
   "category": "memory",
-  "memory": "name: Kofi; favorite color: magenta; favorite food: risotto",
+  "memory": "name: Farah; favorite color: indigo; favorite food: falafel",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what food do I like?"
+   }
+  ],
+  "expect": "contains",
+  "target": "falafel"
+ },
+ {
+  "id": 641,
+  "category": "memory",
+  "memory": "name: Mateo; favorite color: indigo; favorite food: falafel",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what food do I like?"
+   }
+  ],
+  "expect": "contains",
+  "target": "falafel"
+ },
+ {
+  "id": 642,
+  "category": "memory",
+  "memory": "name: Mateo; favorite color: crimson; favorite food: paella",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my favorite color?"
+   }
+  ],
+  "expect": "contains",
+  "target": "crimson"
+ },
+ {
+  "id": 643,
+  "category": "memory",
+  "memory": "name: Anya; favorite color: scarlet; favorite food: biryani",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my name?"
+   }
+  ],
+  "expect": "contains",
+  "target": "Anya"
+ },
+ {
+  "id": 644,
+  "category": "memory",
+  "memory": "name: Kofi; favorite color: charcoal; favorite food: katsu",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what food do I like?"
+   }
+  ],
+  "expect": "contains",
+  "target": "katsu"
+ },
+ {
+  "id": 645,
+  "category": "memory",
+  "memory": "name: Yuki; favorite color: lavender; favorite food: katsu",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what food do I like?"
+   }
+  ],
+  "expect": "contains",
+  "target": "katsu"
+ },
+ {
+  "id": 646,
+  "category": "memory",
+  "memory": "name: Bruno; favorite color: olive; favorite food: pierogi",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what food do I like?"
+   }
+  ],
+  "expect": "contains",
+  "target": "pierogi"
+ },
+ {
+  "id": 647,
+  "category": "memory",
+  "memory": "name: Tomas; favorite color: turquoise; favorite food: risotto",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what food do I like?"
+   }
+  ],
+  "expect": "contains",
+  "target": "risotto"
+ },
+ {
+  "id": 648,
+  "category": "memory",
+  "memory": "name: Bruno; favorite color: lavender; favorite food: risotto",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what food do I like?"
+   }
+  ],
+  "expect": "contains",
+  "target": "risotto"
+ },
+ {
+  "id": 649,
+  "category": "memory",
+  "memory": "name: Mateo; favorite color: charcoal; favorite food: risotto",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my name?"
+   }
+  ],
+  "expect": "contains",
+  "target": "Mateo"
+ },
+ {
+  "id": 650,
+  "category": "memory",
+  "memory": "name: Omar; favorite color: crimson; favorite food: falafel",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what food do I like?"
+   }
+  ],
+  "expect": "contains",
+  "target": "falafel"
+ },
+ {
+  "id": 651,
+  "category": "memory",
+  "memory": "name: Yuki; favorite color: olive; favorite food: biryani",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my name?"
+   }
+  ],
+  "expect": "contains",
+  "target": "Yuki"
+ },
+ {
+  "id": 652,
+  "category": "memory",
+  "memory": "name: Ines; favorite color: scarlet; favorite food: paella",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what food do I like?"
+   }
+  ],
+  "expect": "contains",
+  "target": "paella"
+ },
+ {
+  "id": 653,
+  "category": "memory",
+  "memory": "name: Kofi; favorite color: scarlet; favorite food: samosas",
   "turns": [
    {
     "role": "user",
@@ -9848,9 +9302,87 @@
   "target": "Kofi"
  },
  {
-  "id": 696,
+  "id": 654,
   "category": "memory",
-  "memory": "name: Mateo; favorite color: magenta; favorite food: risotto",
+  "memory": "name: Lena; favorite color: indigo; favorite food: risotto",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what food do I like?"
+   }
+  ],
+  "expect": "contains",
+  "target": "risotto"
+ },
+ {
+  "id": 655,
+  "category": "memory",
+  "memory": "name: Lena; favorite color: turquoise; favorite food: ravioli",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my name?"
+   }
+  ],
+  "expect": "contains",
+  "target": "Lena"
+ },
+ {
+  "id": 656,
+  "category": "memory",
+  "memory": "name: Ines; favorite color: olive; favorite food: risotto",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what food do I like?"
+   }
+  ],
+  "expect": "contains",
+  "target": "risotto"
+ },
+ {
+  "id": 657,
+  "category": "memory",
+  "memory": "name: Priya; favorite color: charcoal; favorite food: risotto",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what food do I like?"
+   }
+  ],
+  "expect": "contains",
+  "target": "risotto"
+ },
+ {
+  "id": 658,
+  "category": "memory",
+  "memory": "name: Mateo; favorite color: magenta; favorite food: paella",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what food do I like?"
+   }
+  ],
+  "expect": "contains",
+  "target": "paella"
+ },
+ {
+  "id": 659,
+  "category": "memory",
+  "memory": "name: Kofi; favorite color: magenta; favorite food: pierogi",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my name?"
+   }
+  ],
+  "expect": "contains",
+  "target": "Kofi"
+ },
+ {
+  "id": 660,
+  "category": "memory",
+  "memory": "name: Tomas; favorite color: magenta; favorite food: pierogi",
   "turns": [
    {
     "role": "user",
@@ -9861,9 +9393,9 @@
   "target": "magenta"
  },
  {
-  "id": 697,
+  "id": 661,
   "category": "memory",
-  "memory": "name: Tomas; favorite color: magenta; favorite food: gnocchi",
+  "memory": "name: Lena; favorite color: scarlet; favorite food: paella",
   "turns": [
    {
     "role": "user",
@@ -9871,10 +9403,140 @@
    }
   ],
   "expect": "contains",
-  "target": "gnocchi"
+  "target": "paella"
  },
  {
-  "id": 698,
+  "id": 662,
+  "category": "memory",
+  "memory": "name: Bruno; favorite color: charcoal; favorite food: ravioli",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what food do I like?"
+   }
+  ],
+  "expect": "contains",
+  "target": "ravioli"
+ },
+ {
+  "id": 663,
+  "category": "memory",
+  "memory": "name: Yuki; favorite color: lavender; favorite food: falafel",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what food do I like?"
+   }
+  ],
+  "expect": "contains",
+  "target": "falafel"
+ },
+ {
+  "id": 664,
+  "category": "memory",
+  "memory": "name: Kofi; favorite color: scarlet; favorite food: risotto",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my favorite color?"
+   }
+  ],
+  "expect": "contains",
+  "target": "scarlet"
+ },
+ {
+  "id": 665,
+  "category": "memory",
+  "memory": "name: Ines; favorite color: scarlet; favorite food: ravioli",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my favorite color?"
+   }
+  ],
+  "expect": "contains",
+  "target": "scarlet"
+ },
+ {
+  "id": 666,
+  "category": "memory",
+  "memory": "name: Bruno; favorite color: magenta; favorite food: risotto",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what food do I like?"
+   }
+  ],
+  "expect": "contains",
+  "target": "risotto"
+ },
+ {
+  "id": 667,
+  "category": "memory",
+  "memory": "name: Omar; favorite color: charcoal; favorite food: biryani",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my name?"
+   }
+  ],
+  "expect": "contains",
+  "target": "Omar"
+ },
+ {
+  "id": 668,
+  "category": "memory",
+  "memory": "name: Yuki; favorite color: olive; favorite food: samosas",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my favorite color?"
+   }
+  ],
+  "expect": "contains",
+  "target": "olive"
+ },
+ {
+  "id": 669,
+  "category": "memory",
+  "memory": "name: Omar; favorite color: olive; favorite food: ravioli",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my name?"
+   }
+  ],
+  "expect": "contains",
+  "target": "Omar"
+ },
+ {
+  "id": 670,
+  "category": "memory",
+  "memory": "name: Ines; favorite color: indigo; favorite food: risotto",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my favorite color?"
+   }
+  ],
+  "expect": "contains",
+  "target": "indigo"
+ },
+ {
+  "id": 671,
+  "category": "memory",
+  "memory": "name: Farah; favorite color: olive; favorite food: risotto",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my favorite color?"
+   }
+  ],
+  "expect": "contains",
+  "target": "olive"
+ },
+ {
+  "id": 672,
   "category": "memory",
   "memory": "name: Ines; favorite color: olive; favorite food: falafel",
   "turns": [
@@ -9887,9 +9549,74 @@
   "target": "falafel"
  },
  {
-  "id": 699,
+  "id": 673,
   "category": "memory",
-  "memory": "name: Yuki; favorite color: crimson; favorite food: gnocchi",
+  "memory": "name: Lena; favorite color: turquoise; favorite food: pierogi",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my name?"
+   }
+  ],
+  "expect": "contains",
+  "target": "Lena"
+ },
+ {
+  "id": 674,
+  "category": "memory",
+  "memory": "name: Nadia; favorite color: turquoise; favorite food: ravioli",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my favorite color?"
+   }
+  ],
+  "expect": "contains",
+  "target": "turquoise"
+ },
+ {
+  "id": 675,
+  "category": "memory",
+  "memory": "name: Kofi; favorite color: scarlet; favorite food: biryani",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my name?"
+   }
+  ],
+  "expect": "contains",
+  "target": "Kofi"
+ },
+ {
+  "id": 676,
+  "category": "memory",
+  "memory": "name: Mateo; favorite color: charcoal; favorite food: biryani",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my favorite color?"
+   }
+  ],
+  "expect": "contains",
+  "target": "charcoal"
+ },
+ {
+  "id": 677,
+  "category": "memory",
+  "memory": "name: Tomas; favorite color: scarlet; favorite food: pierogi",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my favorite color?"
+   }
+  ],
+  "expect": "contains",
+  "target": "scarlet"
+ },
+ {
+  "id": 678,
+  "category": "memory",
+  "memory": "name: Lena; favorite color: lavender; favorite food: ravioli",
   "turns": [
    {
     "role": "user",
@@ -9897,7 +9624,280 @@
    }
   ],
   "expect": "contains",
-  "target": "gnocchi"
+  "target": "ravioli"
+ },
+ {
+  "id": 679,
+  "category": "memory",
+  "memory": "name: Mateo; favorite color: indigo; favorite food: pierogi",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my name?"
+   }
+  ],
+  "expect": "contains",
+  "target": "Mateo"
+ },
+ {
+  "id": 680,
+  "category": "memory",
+  "memory": "name: Anya; favorite color: turquoise; favorite food: katsu",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my favorite color?"
+   }
+  ],
+  "expect": "contains",
+  "target": "turquoise"
+ },
+ {
+  "id": 681,
+  "category": "memory",
+  "memory": "name: Bruno; favorite color: olive; favorite food: falafel",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my name?"
+   }
+  ],
+  "expect": "contains",
+  "target": "Bruno"
+ },
+ {
+  "id": 682,
+  "category": "memory",
+  "memory": "name: Yuki; favorite color: charcoal; favorite food: falafel",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my name?"
+   }
+  ],
+  "expect": "contains",
+  "target": "Yuki"
+ },
+ {
+  "id": 683,
+  "category": "memory",
+  "memory": "name: Nadia; favorite color: crimson; favorite food: samosas",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my name?"
+   }
+  ],
+  "expect": "contains",
+  "target": "Nadia"
+ },
+ {
+  "id": 684,
+  "category": "memory",
+  "memory": "name: Anya; favorite color: charcoal; favorite food: biryani",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what food do I like?"
+   }
+  ],
+  "expect": "contains",
+  "target": "biryani"
+ },
+ {
+  "id": 685,
+  "category": "memory",
+  "memory": "name: Farah; favorite color: turquoise; favorite food: pierogi",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my favorite color?"
+   }
+  ],
+  "expect": "contains",
+  "target": "turquoise"
+ },
+ {
+  "id": 686,
+  "category": "memory",
+  "memory": "name: Anya; favorite color: magenta; favorite food: paella",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what food do I like?"
+   }
+  ],
+  "expect": "contains",
+  "target": "paella"
+ },
+ {
+  "id": 687,
+  "category": "memory",
+  "memory": "name: Bruno; favorite color: scarlet; favorite food: ravioli",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what food do I like?"
+   }
+  ],
+  "expect": "contains",
+  "target": "ravioli"
+ },
+ {
+  "id": 688,
+  "category": "memory",
+  "memory": "name: Yuki; favorite color: turquoise; favorite food: ravioli",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my favorite color?"
+   }
+  ],
+  "expect": "contains",
+  "target": "turquoise"
+ },
+ {
+  "id": 689,
+  "category": "memory",
+  "memory": "name: Kofi; favorite color: scarlet; favorite food: falafel",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what food do I like?"
+   }
+  ],
+  "expect": "contains",
+  "target": "falafel"
+ },
+ {
+  "id": 690,
+  "category": "memory",
+  "memory": "name: Lena; favorite color: indigo; favorite food: pierogi",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my name?"
+   }
+  ],
+  "expect": "contains",
+  "target": "Lena"
+ },
+ {
+  "id": 691,
+  "category": "memory",
+  "memory": "name: Bruno; favorite color: lavender; favorite food: pierogi",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what food do I like?"
+   }
+  ],
+  "expect": "contains",
+  "target": "pierogi"
+ },
+ {
+  "id": 692,
+  "category": "memory",
+  "memory": "name: Mateo; favorite color: turquoise; favorite food: paella",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my name?"
+   }
+  ],
+  "expect": "contains",
+  "target": "Mateo"
+ },
+ {
+  "id": 693,
+  "category": "memory",
+  "memory": "name: Mateo; favorite color: olive; favorite food: paella",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my favorite color?"
+   }
+  ],
+  "expect": "contains",
+  "target": "olive"
+ },
+ {
+  "id": 694,
+  "category": "memory",
+  "memory": "name: Kofi; favorite color: scarlet; favorite food: risotto",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what food do I like?"
+   }
+  ],
+  "expect": "contains",
+  "target": "risotto"
+ },
+ {
+  "id": 695,
+  "category": "memory",
+  "memory": "name: Farah; favorite color: turquoise; favorite food: falafel",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my favorite color?"
+   }
+  ],
+  "expect": "contains",
+  "target": "turquoise"
+ },
+ {
+  "id": 696,
+  "category": "memory",
+  "memory": "name: Priya; favorite color: olive; favorite food: falafel",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what food do I like?"
+   }
+  ],
+  "expect": "contains",
+  "target": "falafel"
+ },
+ {
+  "id": 697,
+  "category": "memory",
+  "memory": "name: Yuki; favorite color: turquoise; favorite food: katsu",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what food do I like?"
+   }
+  ],
+  "expect": "contains",
+  "target": "katsu"
+ },
+ {
+  "id": 698,
+  "category": "memory",
+  "memory": "name: Tomas; favorite color: olive; favorite food: biryani",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what's my favorite color?"
+   }
+  ],
+  "expect": "contains",
+  "target": "olive"
+ },
+ {
+  "id": 699,
+  "category": "memory",
+  "memory": "name: Anya; favorite color: scarlet; favorite food: pierogi",
+  "turns": [
+   {
+    "role": "user",
+    "text": "what food do I like?"
+   }
+  ],
+  "expect": "contains",
+  "target": "pierogi"
  },
  {
   "id": 700,
@@ -9906,7 +9906,7 @@
   "turns": [
    {
     "role": "user",
-    "text": ""
+    "text": "repeat after me: banana banana banana"
    }
   ],
   "expect": "any",
@@ -9919,7 +9919,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "!!!!!!!!!!"
+    "text": "🙂🙂🙂"
    }
   ],
   "expect": "any",
@@ -9932,7 +9932,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "write a novel"
+    "text": "qwertyuiop"
    }
   ],
   "expect": "any",
@@ -9945,7 +9945,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "!!!!!!!!!!"
+    "text": "repeat after me: banana banana banana"
    }
   ],
   "expect": "any",
@@ -9958,7 +9958,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "aaaaaaaaaaaaaaaa"
+    "text": "🙂🙂🙂"
    }
   ],
   "expect": "any",
@@ -9971,7 +9971,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "!!!!!!!!!!"
+    "text": "write a novel"
    }
   ],
   "expect": "any",
@@ -9984,7 +9984,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "repeat after me: banana banana banana"
+    "text": "0000 1111 0000"
    }
   ],
   "expect": "any",
@@ -9997,7 +9997,7 @@
   "turns": [
    {
     "role": "user",
-    "text": ""
+    "text": "🙂🙂🙂"
    }
   ],
   "expect": "any",
@@ -10010,7 +10010,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "!!!!!!!!!!"
+    "text": "?"
    }
   ],
   "expect": "any",
@@ -10023,7 +10023,7 @@
   "turns": [
    {
     "role": "user",
-    "text": ""
+    "text": "qwertyuiop"
    }
   ],
   "expect": "any",
@@ -10036,7 +10036,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "qwertyuiop"
+    "text": "tell me everything about everything"
    }
   ],
   "expect": "any",
@@ -10049,7 +10049,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "repeat after me: banana banana banana"
+    "text": "write a novel"
    }
   ],
   "expect": "any",
@@ -10062,7 +10062,7 @@
   "turns": [
    {
     "role": "user",
-    "text": ""
+    "text": "0000 1111 0000"
    }
   ],
   "expect": "any",
@@ -10075,7 +10075,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "0000 1111 0000"
+    "text": "write a novel"
    }
   ],
   "expect": "any",
@@ -10101,7 +10101,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "🙂🙂🙂"
+    "text": ""
    }
   ],
   "expect": "any",
@@ -10127,7 +10127,7 @@
   "turns": [
    {
     "role": "user",
-    "text": ""
+    "text": "?"
    }
   ],
   "expect": "any",
@@ -10140,7 +10140,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "qwertyuiop"
+    "text": "repeat after me: banana banana banana"
    }
   ],
   "expect": "any",
@@ -10166,7 +10166,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "🙂🙂🙂"
+    "text": "?"
    }
   ],
   "expect": "any",
@@ -10179,7 +10179,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "aaaaaaaaaaaaaaaa"
+    "text": "write a novel"
    }
   ],
   "expect": "any",
@@ -10205,7 +10205,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "repeat after me: banana banana banana"
+    "text": "!!!!!!!!!!"
    }
   ],
   "expect": "any",
@@ -10218,7 +10218,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "?"
+    "text": "🙂🙂🙂"
    }
   ],
   "expect": "any",
@@ -10231,7 +10231,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "tell me everything about everything"
+    "text": "aaaaaaaaaaaaaaaa"
    }
   ],
   "expect": "any",
@@ -10244,7 +10244,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "write a novel"
+    "text": "tell me everything about everything"
    }
   ],
   "expect": "any",
@@ -10257,7 +10257,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "repeat after me: banana banana banana"
+    "text": "?"
    }
   ],
   "expect": "any",
@@ -10270,7 +10270,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "?"
+    "text": "tell me everything about everything"
    }
   ],
   "expect": "any",
@@ -10283,7 +10283,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "!!!!!!!!!!"
+    "text": "?"
    }
   ],
   "expect": "any",
@@ -10296,7 +10296,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "tell me everything about everything"
+    "text": "0000 1111 0000"
    }
   ],
   "expect": "any",
@@ -10309,7 +10309,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "0000 1111 0000"
+    "text": "write a novel"
    }
   ],
   "expect": "any",
@@ -10322,7 +10322,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "0000 1111 0000"
+    "text": "🙂🙂🙂"
    }
   ],
   "expect": "any",
@@ -10335,7 +10335,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "repeat after me: banana banana banana"
+    "text": "?"
    }
   ],
   "expect": "any",
@@ -10348,7 +10348,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "!!!!!!!!!!"
+    "text": "?"
    }
   ],
   "expect": "any",
@@ -10361,7 +10361,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "write a novel"
+    "text": "aaaaaaaaaaaaaaaa"
    }
   ],
   "expect": "any",
@@ -10374,7 +10374,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "tell me everything about everything"
+    "text": "🙂🙂🙂"
    }
   ],
   "expect": "any",
@@ -10387,7 +10387,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "tell me everything about everything"
+    "text": "0000 1111 0000"
    }
   ],
   "expect": "any",
@@ -10400,7 +10400,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "🙂🙂🙂"
+    "text": "?"
    }
   ],
   "expect": "any",
@@ -10413,7 +10413,7 @@
   "turns": [
    {
     "role": "user",
-    "text": ""
+    "text": "0000 1111 0000"
    }
   ],
   "expect": "any",
@@ -10426,7 +10426,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "write a novel"
+    "text": "🙂🙂🙂"
    }
   ],
   "expect": "any",
@@ -10439,7 +10439,7 @@
   "turns": [
    {
     "role": "user",
-    "text": ""
+    "text": "qwertyuiop"
    }
   ],
   "expect": "any",
@@ -10452,7 +10452,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "repeat after me: banana banana banana"
+    "text": "0000 1111 0000"
    }
   ],
   "expect": "any",
@@ -10478,7 +10478,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "!!!!!!!!!!"
+    "text": "aaaaaaaaaaaaaaaa"
    }
   ],
   "expect": "any",
@@ -10491,7 +10491,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "aaaaaaaaaaaaaaaa"
+    "text": "0000 1111 0000"
    }
   ],
   "expect": "any",
@@ -10504,7 +10504,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "🙂🙂🙂"
+    "text": ""
    }
   ],
   "expect": "any",
@@ -10517,7 +10517,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "!!!!!!!!!!"
+    "text": "🙂🙂🙂"
    }
   ],
   "expect": "any",
@@ -10530,7 +10530,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "aaaaaaaaaaaaaaaa"
+    "text": "repeat after me: banana banana banana"
    }
   ],
   "expect": "any",
@@ -10543,7 +10543,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "aaaaaaaaaaaaaaaa"
+    "text": "write a novel"
    }
   ],
   "expect": "any",
@@ -10556,7 +10556,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "aaaaaaaaaaaaaaaa"
+    "text": "write a novel"
    }
   ],
   "expect": "any",
@@ -10569,7 +10569,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "0000 1111 0000"
+    "text": "!!!!!!!!!!"
    }
   ],
   "expect": "any",
@@ -10582,7 +10582,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "repeat after me: banana banana banana"
+    "text": "write a novel"
    }
   ],
   "expect": "any",
@@ -10595,7 +10595,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "qwertyuiop"
+    "text": "tell me everything about everything"
    }
   ],
   "expect": "any",
@@ -10621,7 +10621,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "🙂🙂🙂"
+    "text": "!!!!!!!!!!"
    }
   ],
   "expect": "any",
@@ -10634,7 +10634,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "!!!!!!!!!!"
+    "text": ""
    }
   ],
   "expect": "any",
@@ -10647,7 +10647,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "!!!!!!!!!!"
+    "text": "aaaaaaaaaaaaaaaa"
    }
   ],
   "expect": "any",
@@ -10673,7 +10673,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "qwertyuiop"
+    "text": "🙂🙂🙂"
    }
   ],
   "expect": "any",
@@ -10686,7 +10686,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "aaaaaaaaaaaaaaaa"
+    "text": "?"
    }
   ],
   "expect": "any",
@@ -10699,7 +10699,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "!!!!!!!!!!"
+    "text": "?"
    }
   ],
   "expect": "any",
@@ -10712,7 +10712,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "repeat after me: banana banana banana"
+    "text": "?"
    }
   ],
   "expect": "any",
@@ -10725,7 +10725,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "repeat after me: banana banana banana"
+    "text": "!!!!!!!!!!"
    }
   ],
   "expect": "any",
@@ -10738,7 +10738,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "!!!!!!!!!!"
+    "text": "?"
    }
   ],
   "expect": "any",
@@ -10751,7 +10751,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "write a novel"
+    "text": "tell me everything about everything"
    }
   ],
   "expect": "any",
@@ -10764,7 +10764,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "repeat after me: banana banana banana"
+    "text": "aaaaaaaaaaaaaaaa"
    }
   ],
   "expect": "any",
@@ -10777,7 +10777,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "?"
+    "text": "write a novel"
    }
   ],
   "expect": "any",
@@ -10790,7 +10790,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "aaaaaaaaaaaaaaaa"
+    "text": "🙂🙂🙂"
    }
   ],
   "expect": "any",
@@ -10803,7 +10803,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "0000 1111 0000"
+    "text": "aaaaaaaaaaaaaaaa"
    }
   ],
   "expect": "any",
@@ -10816,7 +10816,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "aaaaaaaaaaaaaaaa"
+    "text": "!!!!!!!!!!"
    }
   ],
   "expect": "any",
@@ -10829,7 +10829,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "repeat after me: banana banana banana"
+    "text": "qwertyuiop"
    }
   ],
   "expect": "any",
@@ -10842,7 +10842,7 @@
   "turns": [
    {
     "role": "user",
-    "text": ""
+    "text": "tell me everything about everything"
    }
   ],
   "expect": "any",
@@ -10868,7 +10868,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "repeat after me: banana banana banana"
+    "text": "0000 1111 0000"
    }
   ],
   "expect": "any",
@@ -10894,7 +10894,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "qwertyuiop"
+    "text": "write a novel"
    }
   ],
   "expect": "any",
@@ -10907,7 +10907,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "repeat after me: banana banana banana"
+    "text": "aaaaaaaaaaaaaaaa"
    }
   ],
   "expect": "any",
@@ -10920,7 +10920,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "🙂🙂🙂"
+    "text": "aaaaaaaaaaaaaaaa"
    }
   ],
   "expect": "any",
@@ -10933,7 +10933,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "write a novel"
+    "text": "🙂🙂🙂"
    }
   ],
   "expect": "any",
@@ -10946,7 +10946,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "0000 1111 0000"
+    "text": "?"
    }
   ],
   "expect": "any",
@@ -10959,7 +10959,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "🙂🙂🙂"
+    "text": "!!!!!!!!!!"
    }
   ],
   "expect": "any",
@@ -10972,7 +10972,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "?"
+    "text": ""
    }
   ],
   "expect": "any",
@@ -10998,7 +10998,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "tell me everything about everything"
+    "text": "repeat after me: banana banana banana"
    }
   ],
   "expect": "any",
@@ -11011,7 +11011,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "write a novel"
+    "text": "aaaaaaaaaaaaaaaa"
    }
   ],
   "expect": "any",
@@ -11024,7 +11024,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "0000 1111 0000"
+    "text": "aaaaaaaaaaaaaaaa"
    }
   ],
   "expect": "any",
@@ -11037,7 +11037,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "write a novel"
+    "text": "tell me everything about everything"
    }
   ],
   "expect": "any",
@@ -11050,7 +11050,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "tell me everything about everything"
+    "text": "repeat after me: banana banana banana"
    }
   ],
   "expect": "any",
@@ -11063,7 +11063,7 @@
   "turns": [
    {
     "role": "user",
-    "text": ""
+    "text": "🙂🙂🙂"
    }
   ],
   "expect": "any",
@@ -11076,7 +11076,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "!!!!!!!!!!"
+    "text": "🙂🙂🙂"
    }
   ],
   "expect": "any",
@@ -11089,7 +11089,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "?"
+    "text": "qwertyuiop"
    }
   ],
   "expect": "any",
@@ -11102,7 +11102,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "repeat after me: banana banana banana"
+    "text": "aaaaaaaaaaaaaaaa"
    }
   ],
   "expect": "any",
@@ -11128,7 +11128,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "?"
+    "text": "repeat after me: banana banana banana"
    }
   ],
   "expect": "any",
@@ -11141,7 +11141,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "write a novel"
+    "text": ""
    }
   ],
   "expect": "any",
@@ -11154,7 +11154,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "tell me everything about everything"
+    "text": "qwertyuiop"
    }
   ],
   "expect": "any",
@@ -11167,7 +11167,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "!!!!!!!!!!"
+    "text": "aaaaaaaaaaaaaaaa"
    }
   ],
   "expect": "any",
@@ -11180,7 +11180,7 @@
   "turns": [
    {
     "role": "user",
-    "text": "🙂🙂🙂"
+    "text": "?"
    }
   ],
   "expect": "any",
@@ -11193,10 +11193,1310 @@
   "turns": [
    {
     "role": "user",
-    "text": "aaaaaaaaaaaaaaaa"
+    "text": "repeat after me: banana banana banana"
    }
   ],
   "expect": "any",
   "target": null
+ },
+ {
+  "id": 800,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "got a name?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 801,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "which assistant is this?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 802,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "what do I call you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 803,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "what do people call you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 804,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "may I ask your name?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 805,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "sorry, I forgot your name"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 806,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "what do people call you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 807,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "before we start, who are you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 808,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "and you are...?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 809,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "which assistant is this?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 810,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "may I ask your name?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 811,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "so who exactly am I chatting with?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 812,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "so who exactly am I chatting with?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 813,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "what do people call you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 814,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "what do I call you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 815,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "you got a name or what?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 816,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "which assistant is this?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 817,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "got a name?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 818,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "you got a name or what?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 819,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "may I ask your name?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 820,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "what do I call you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 821,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "which assistant is this?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 822,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "which assistant is this?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 823,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "what do I call you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 824,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "before we start, who are you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 825,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "you got a name or what?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 826,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "you got a name or what?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 827,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "what do I call you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 828,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "what do I call you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 829,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "got a name?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 830,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "which assistant is this?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 831,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "got a name?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 832,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "sorry, I forgot your name"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 833,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "may I ask your name?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 834,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "sorry, I forgot your name"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 835,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "sorry, I forgot your name"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 836,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "what do I call you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 837,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "what do I call you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 838,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "so who exactly am I chatting with?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 839,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "may I ask your name?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 840,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "so who exactly am I chatting with?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 841,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "before we start, who are you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 842,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "which assistant is this?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 843,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "what do I call you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 844,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "what do I call you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 845,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "which assistant is this?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 846,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "may I ask your name?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 847,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "before we start, who are you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 848,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "which assistant is this?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 849,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "got a name?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 850,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "and you are...?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 851,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "got a name?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 852,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "you got a name or what?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 853,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "and you are...?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 854,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "sorry, I forgot your name"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 855,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "what do I call you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 856,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "so who exactly am I chatting with?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 857,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "you got a name or what?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 858,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "got a name?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 859,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "sorry, I forgot your name"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 860,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "and you are...?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 861,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "sorry, I forgot your name"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 862,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "before we start, who are you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 863,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "what do I call you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 864,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "and you are...?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 865,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "got a name?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 866,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "may I ask your name?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 867,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "sorry, I forgot your name"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 868,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "what do I call you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 869,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "which assistant is this?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 870,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "what do people call you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 871,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "and you are...?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 872,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "what do I call you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 873,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "which assistant is this?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 874,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "got a name?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 875,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "got a name?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 876,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "got a name?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 877,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "sorry, I forgot your name"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 878,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "what do people call you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 879,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "got a name?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 880,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "sorry, I forgot your name"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 881,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "which assistant is this?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 882,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "you got a name or what?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 883,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "so who exactly am I chatting with?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 884,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "before we start, who are you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 885,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "and you are...?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 886,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "before we start, who are you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 887,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "so who exactly am I chatting with?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 888,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "may I ask your name?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 889,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "what do people call you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 890,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "got a name?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 891,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "you got a name or what?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 892,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "you got a name or what?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 893,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "sorry, I forgot your name"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 894,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "what do I call you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 895,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "what do people call you?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 896,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "may I ask your name?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 897,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "which assistant is this?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 898,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "and you are...?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
+ },
+ {
+  "id": 899,
+  "category": "identity",
+  "memory": null,
+  "turns": [
+   {
+    "role": "user",
+    "text": "so who exactly am I chatting with?"
+   }
+  ],
+  "expect": "name",
+  "target": "PocketLM"
  }
 ]

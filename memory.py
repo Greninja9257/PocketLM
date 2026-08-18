@@ -30,6 +30,24 @@ _DISLIKES = re.compile(r"\bi (?:really )?(?:hate|dislike|can't stand)\s+([a-z ]{
 _STOP = {"it", "that", "this", "you", "them", "him", "her", "to", "the", "a", "when"}
 
 
+def format_fact(key: str, value) -> str:
+    """Render one fact for the <mem> line.
+
+    This is the single source of truth for the format, imported by
+    scripts/build_corpus.py so training data and inference cannot drift. They
+    did drift once: the corpus wrote "favorite_color: blue" while inference
+    rendered "favorite color: blue", and the model -- which had only ever seen
+    the underscore form -- scored 0% on every memory question.
+    """
+    if isinstance(value, (list, tuple)):
+        value = ", ".join(str(v) for v in value)
+    return f"{key}: {value}"
+
+
+def format_facts(facts: Dict[str, object]) -> str:
+    return "; ".join(format_fact(k, v) for k, v in facts.items())
+
+
 def _clean(value: str, lower: bool = True) -> str:
     value = value.strip().strip(".!,")
     if lower:
@@ -90,11 +108,7 @@ class Memory:
 
     # ------------------------------------------------------------ rendering
 
-    @staticmethod
-    def _fmt(key: str, value) -> str:
-        if isinstance(value, list):
-            value = ", ".join(str(v) for v in value)
-        return f"{key.replace('_', ' ')}: {value}"
+    _fmt = staticmethod(format_fact)
 
     def render(self, query: str = "", max_facts: int = 4) -> Optional[str]:
         """Render the facts most relevant to the query, most relevant first.

@@ -233,18 +233,23 @@ line. None of that needs fixing in the weights.
 Training loss is close to useless here — the bootstrap corpus is slot-filled,
 so a model can drive it very low by memorising templates.
 
-So `eval/conversations.json` holds **800 prompts across 8 categories**, built
+So `eval/conversations.json` holds **900 prompts across 9 categories**, built
 from names, foods, colours and phrasings that **do not appear in the training
 generator**, each with a mechanically checkable expectation:
 
 | metric | what it asks |
 |---|---|
 | `memory_acc` | given the fact in context, does the reply state it? |
+| `name_acc` | asked who it is, does it say "PocketLM"? |
 | `ignorance` | on unanswerable questions, does it decline instead of inventing? |
 | `question_rate` | on follow-ups and ambiguity, does it ask something back? |
 | `loop_rate` | how often the filter has to reject a degenerate reply |
 | `echo_rate` | how often it repeats a reply it already gave |
 | `distinct2` | distinct-bigram ratio across all 800 replies |
+
+The identity prompts use phrasings that appear nowhere in the training
+generator ("and you are...?", "what do people call you?"), so `name_acc`
+measures that the model learned its name rather than memorised one question.
 
 `--dump` writes a **blind A/B file**: replies shuffled and unlabelled, ready for
 a human or a teacher model to rank without knowing which model wrote which.
@@ -331,7 +336,7 @@ scripts/build_corpus.py      bootstrap corpus generator
 scripts/train_tokenizer.py   BPE training, one tokenizer per vocab size
 scripts/distill.py           teacher-model distillation
 
-eval/make_evalset.py   builds the 800 held-out prompts
+eval/make_evalset.py   builds the 900 held-out prompts
 eval/evaluate.py       scoring + blind A/B
 eval/conversations.json
 ```

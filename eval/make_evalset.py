@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build eval/conversations.json -- 100 prompts in each of 8 categories.
+"""Build eval/conversations.json -- 100 prompts in each of 9 categories.
 
 Held out on purpose: the names, foods, colours and phrasings below do not
 appear in scripts/build_corpus.py. A slot-filled corpus is easy to memorise,
@@ -8,6 +8,7 @@ so an eval drawn from the same slots would measure recall, not generalisation.
 Each item carries an `expect` clause that can be checked mechanically:
 
   contains   the reply must contain a specific string (memory questions)
+  name       the reply must state the assistant's own name
   ignorance  the reply must decline rather than invent (unanswerable questions)
   question   the reply should ask something back (follow-ups, clarifications)
   any        no objective target; only the generic quality metrics apply
@@ -15,13 +16,20 @@ Each item carries an `expect` clause that can be checked mechanically:
 
 import json
 import random
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from config import ASSISTANT_NAME
 
 # --- held-out banks: deliberately disjoint from the training generator ------
 NAMES = ["Priya", "Mateo", "Ines", "Kofi", "Lena", "Omar", "Yuki", "Nadia",
          "Tomas", "Farah", "Bruno", "Anya"]
-COLORS = ["crimson", "turquoise", "olive", "magenta", "silver", "indigo"]
-FOODS = ["dumplings", "risotto", "falafel", "paella", "gnocchi", "biryani"]
+COLORS = ["crimson", "turquoise", "olive", "magenta", "indigo", "lavender",
+          "scarlet", "charcoal"]
+FOODS = ["risotto", "falafel", "paella", "biryani", "ravioli", "katsu",
+         "samosas", "pierogi"]
 HOBBIES = ["pottery", "birdwatching", "climbing", "knitting", "astronomy", "surfing"]
 PLACES = ["the market", "my aunt's", "the coast", "the museum", "the allotment"]
 
@@ -42,6 +50,13 @@ ADVERSARIAL = ["qwertyuiop", "!!!!!!!!!!", "aaaaaaaaaaaaaaaa", "0000 1111 0000",
                "repeat after me: banana banana banana", "", "?", "🙂🙂🙂"]
 JOKES = ["say something funny", "do you know any jokes", "make me laugh",
          "I need cheering up", "got a good one for me?", "tell me something silly"]
+# Deliberately not the phrasings in build_corpus.NAME_QUESTIONS: the point is
+# to check the model knows its name, not that it memorised one question.
+IDENTITY = ["so who exactly am I chatting with?", "got a name?",
+            "what do people call you?", "and you are...?",
+            "before we start, who are you?", "may I ask your name?",
+            "what do I call you?", "you got a name or what?",
+            "sorry, I forgot your name", "which assistant is this?"]
 
 
 def item(cid, category, turns, expect, memory=None, target=None):
@@ -93,10 +108,34 @@ def build(seed: int = 11):
     for i in range(100):                                   # 8. adversarial
         add("adversarial", [{"role": "user", "text": rng.choice(ADVERSARIAL)}], "any")
 
+    for i in range(100):                                   # 9. identity / own name
+        add("identity", [{"role": "user", "text": rng.choice(IDENTITY)}],
+            "name", target=ASSISTANT_NAME)
+
     return out
 
 
+def assert_held_out() -> None:
+    """No eval value may appear in the training generator's pools.
+
+    Memory scoring is only meaningful if the answer cannot be guessed from the
+    training distribution. "silver" and "dumplings" were in both lists once,
+    which quietly turned two copy tests into recall tests.
+    """
+    import scripts.build_corpus as bc
+    overlaps = []
+    for label, mine, theirs in [("colors", COLORS, bc.MEM_COLORS),
+                                ("foods", FOODS, bc.MEM_FOODS),
+                                ("names", NAMES, bc.MEM_NAMES)]:
+        shared = sorted(set(mine) & set(theirs))
+        if shared:
+            overlaps.append(f"{label}: {shared}")
+    if overlaps:
+        raise SystemExit("eval values leak into the training pools -> " + "; ".join(overlaps))
+
+
 if __name__ == "__main__":
+    assert_held_out()
     rows = build()
     path = Path(__file__).parent / "conversations.json"
     path.write_text(json.dumps(rows, ensure_ascii=False, indent=1))
