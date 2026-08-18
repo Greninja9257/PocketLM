@@ -2,8 +2,9 @@
 """Phase-based training for any model in the PocketLM family.
 
     python train.py --model 50k
-    python train.py --model 1m --device mps
-    python train.py --model 50k-gru        # architecture variant at the same budget
+    python train.py --model 1m                 # uses MLX automatically on Apple Silicon
+    python train.py --model 50k --backend torch
+    python train.py --model 50k-gru            # variant at the same budget (torch only)
 
 
     phase 1  language      every token scored, plain text -- learn English
@@ -28,6 +29,26 @@ from config import LR_SCALE, PHASES, PRESETS, STEPS_SCALE, ModelConfig, TrainCon
 from dataset import build_corpus
 from model import build_model, describe
 from tokenizer import BPETokenizer
+
+
+def pick_backend(requested: str, arch: str) -> str:
+    """Choose MLX when it is available and applicable, else PyTorch.
+
+    MLX is ~1.6-1.9x faster than PyTorch for these models on Apple Silicon, so
+    it is the default when it can be used. It implements the transformer only,
+    which covers the whole family; the GRU and hybrid variants fall back.
+    """
+    if requested != "auto":
+        return requested
+    if arch != "transformer":
+        return "torch"
+    try:
+        import mlx.core as mx
+        if mx.default_device().type == mx.DeviceType.gpu:
+            return "mlx"
+    except Exception:
+        pass
+    return "torch"
 
 
 def pick_device(requested: str = "auto") -> torch.device:
@@ -114,7 +135,9 @@ def main() -> None:
     ap.add_argument("--tokenizer", default=None,
                     help="default: the tokenizer matching the model's vocab size")
     ap.add_argument("--out", default=None, help="default checkpoints/<model>.pt")
-    ap.add_argument("--device", default="auto")
+    ap.add_argument("--backend", default="auto", choices=["auto", "mlx", "torch"],
+                    help="auto picks MLX on Apple Silicon for transformer models")
+    ap.add_argument("--device", default="auto", help="torch backend only")
     ap.add_argument("--batch-size", type=int, default=TrainConfig.batch_size)
     ap.add_argument("--steps-scale", type=float, default=None,
                     help="multiply every phase's step count (0.05 for a smoke test); "
@@ -126,11 +149,12 @@ def main() -> None:
     args = ap.parse_args()
 
     torch.manual_seed(args.seed)
-    device = pick_device(args.device)
     out = args.out or f"checkpoints/{args.model}.pt"
 
     cfg = PRESETS[args.model]
     cfg.validate()
+    backend = pick_backend(args.backend, cfg.arch)
+    device = pick_device(args.device) if backend == "torch" else None
     tok_path = args.tokenizer or cfg.tokenizer
     if not Path(tok_path).exists():
         raise SystemExit(f"no tokenizer at {tok_path} — run scripts/train_tokenizer.py")
@@ -139,9 +163,17 @@ def main() -> None:
         raise SystemExit(f"tokenizer {tok_path} has {len(tok)} tokens but "
                          f"{args.model} expects {cfg.vocab_size}")
 
-    model = build_model(cfg).to(device)
-    print(describe(model))
-    print(f"device: {device}   tokenizer: {tok_path}")
+    if backend == "mlx":
+        import mlx.core as mx
+        from model_mlx import build_model_mlx, to_torch_state_dict
+        mx.random.seed(args.seed)
+        model = build_model_mlx(cfg)
+        print(describe(build_model(cfg)))
+        print(f"backend: mlx ({mx.default_device()})   tokenizer: {tok_path}")
+    else:
+        model = build_model(cfg).to(device)
+        print(describe(model))
+        print(f"backend: torch ({device})   tokenizer: {tok_path}")
 
     ctx = cfg.context_length
     corpus = build_corpus(args.data, tok, ctx, "train", seed=args.seed)
@@ -157,15 +189,27 @@ def main() -> None:
                    else STEPS_SCALE.get(args.model, 1.0))
     print(f"lr scale: {lr_scale}x   steps scale: {steps_scale}x")
     log = []
+    if backend == "mlx":
+        import train_mlx
     for phase in PHASES:
         if wanted and phase.name not in wanted:
             continue
         scaled = type(phase)(phase.name, phase.sources,
                              max(1, int(phase.steps * steps_scale)),
                              phase.lr * lr_scale, phase.loss_on, phase.weights)
-        run_phase(model, scaled, corpus, val_corpus, tcfg, device, log)
+        if backend == "mlx":
+            train_mlx.run_phase(model, scaled, corpus, val_corpus, tcfg, log)
+        else:
+            run_phase(model, scaled, corpus, val_corpus, tcfg, device, log)
 
-    save(model, tok_path, out, log)
+    if backend == "mlx":
+        # Save as a PyTorch checkpoint so chat.py, eval/, export.py and
+        # runtime_numpy.py never need to know MLX was involved.
+        torch.save({"config": cfg.to_dict(), "state_dict": to_torch_state_dict(model),
+                    "tokenizer": tok_path, "log": log, "backend": "mlx"}, out)
+        print(f"\nsaved -> {out}  ({cfg.n_params():,} params, trained with mlx)")
+    else:
+        save(model, tok_path, out, log)
 
 
 if __name__ == "__main__":

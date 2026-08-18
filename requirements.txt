@@ -2,5 +2,10 @@
 torch>=2.2
 numpy>=1.24
 
+# Optional, Apple Silicon only: ~1.6-1.9x faster training than PyTorch for
+# models this size. train.py picks it up automatically when present; without
+# it everything falls back to PyTorch with no change in results.
+mlx>=0.29 ; sys_platform == "darwin" and platform_machine == "arm64"
+
 # Optional: only needed for scripts/distill.py (teacher-generated data)
 # anthropic>=0.40

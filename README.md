@@ -128,6 +128,40 @@ make train-family
 make eval-family
 ```
 
+### Apple Silicon: MLX
+
+On Apple Silicon, `train.py` uses **MLX** automatically when it is installed.
+These models are small enough that framework overhead dominates arithmetic,
+which is the regime MLX's lazy graph and unified memory handle well. Measured
+on an M1 at batch 64:
+
+| model | PyTorch (best of CPU/MPS) | MLX | speedup |
+|---|---|---|---|
+| `50k` | 13.4 it/s | **20.8 it/s** | 1.55x |
+| `100k` | 6.3 it/s | **10.1 it/s** | 1.60x |
+| `500k` | 1.7 it/s | **3.2 it/s** | 1.88x |
+| `1m` | 1.1 it/s | **1.9 it/s** | 1.73x |
+
+Notably, PyTorch MPS is no faster than PyTorch CPU here — at this scale the
+GPU never gets to do enough work per kernel to pay for the dispatch.
+
+MLX is a **training accelerator only**. Every parameter carries the same name
+as its PyTorch counterpart, so an MLX run saves an ordinary PyTorch checkpoint
+and `chat.py`, `eval/`, `export.py` and `runtime_numpy.py` never know the
+difference. That promise is enforced by a parity test — same weights into both
+implementations, compare logits:
+
+```bash
+python model_mlx.py
+#   1k: max|diff| = 7.15e-07  ok
+#  ...
+#   1m: max|diff| = 3.34e-06  ok
+```
+
+MLX implements the transformer only, which covers all seven family members;
+the GRU and hybrid variants fall back to PyTorch automatically. Force either
+backend with `--backend mlx` / `--backend torch`.
+
 ---
 
 ## How it works
@@ -285,7 +319,9 @@ generate.py        temperature / top-p / repetition-penalty sampling
 memory.py          external fact store
 filters.py         repetition, length, echo and safety filtering
 manager.py         the system around the model
-train.py           4-phase curriculum
+train.py           4-phase curriculum (dispatches to either backend)
+model_mlx.py       MLX transformer + PyTorch weight interop and parity test
+train_mlx.py       MLX training loop
 finetune.py        further training on new conversations
 chat.py            interactive REPL
 export.py          fp16 export
