@@ -161,7 +161,7 @@ class NumpyPocketLM:
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--model", default="checkpoints/50k.pocketlm.npz")
+    ap.add_argument("--model", default="models/main/500k.npz")
     ap.add_argument("--prompt", default=None, help="one-shot instead of a REPL")
     ap.add_argument("--temperature", type=float, default=0.7)
     args = ap.parse_args()

@@ -19,18 +19,18 @@ are the experimental branches described below.
 |---|---|---|---|---|---|---|---|
 | `1k` | main | 984 | i abor tot what. | id? | ro's poing you. | you or — gontoing? | here poteth what'm. |
 | `5k` | main | 4,944 | hey you, th so! | wourd! | hi! pocketlm up. | sope. | that's allow one. i's st to kn? |
-| `10k` | main | 9,584 | hey there — PocketLM. | pleepve stion. | that's a bad one. do you want to talk about i… | why did the scare — asble, teuickroying. | nope, no clue. you rather PocketLM ould thsam… |
-| `50k` | main | 48,416 | hey there — PocketLM. | PocketLM. | that's a bad one. do you want to talk about i… | why did the scarecrow win an award? | that's outside what I know. |
+| `10k` | main | 9,584 | hey there — PocketLM. | pleepve stion. | that's a bad one. do you want to talk about it? | why did the scare — asble, teuickroying. | nope, no clue. you rather PocketLM ould thsame.c belyal. smalltle? |
+| `50k` | main | 48,416 | hey there — PocketLM. | PocketLM. | that's a bad one. do you want to talk about it? | why did the scarecrow win an award? | that's outside what I know. |
 | `100k` | main | 95,664 | hey there — PocketLM. | I'm PocketLM — hi! | ugh, sorry. how are you holding up? | why don't skeletons fight? | no idea, honestly. |
 | `500k` | main | 491,040 | hey! I'm PocketLM. | I'm PocketLM, hello! | ah, that sucks. want to tell me what happened? | what do you call cheese that isn't yours? | not something I know. |
 | `1m` | main | 968,320 | hey! I'm PocketLM. | I'm PocketLM — hi! | ah, that sucks. want to tell me what happened? | what do you call cheese that isn't yours? | of course. |
 | `1k-best` | testing | 984 | he poonir? | what? | you m. | a tooinp what out. ging? | wig i do panyoure se allod proro? |
-| `10k-best` | testing | 9,808 | hello! i'm pocketlm, what's up? | i'm pocketlm. | that's enes — pocketlm, hereindre up wat! tel… | what do you call a sleeping bull? | i don't know that one. i'm ss. |
+| `10k-best` | testing | 9,808 | hello! i'm pocketlm, what's up? | i'm pocketlm. | that's enes — pocketlm, hereindre up wat! tell. what wor? | what do you call a sleeping bull? | i don't know that one. i'm ss. |
 | `1k-kd` | testing | 984 | henithocket por. you. | ort? | s cketh it d manerat yout y? | d y. | nicket doont m. |
 | `10k-real` | dev | 9,584 | hello! | hi! what's on your smally. | what's allowed. want to talk it out? | would you rather or do the sceah. | that's amwell. What spore. |
 | `10k-hybrid` | dev | 9,968 | hello! | hi! what's on your chegks such a lotted. | wah, I'm PocketLM. or live right. | solid it happened? | som. i ture you could be a guy. |
-| `50k-real` | dev | 48,416 | hey there — PocketLM. | dea what's it doing? | ah, that sucks. want to tell me what happened? | why did the computer go to the doctor? | no idea, honestly. want to ask me something e… |
-| `500k-real` | dev | 491,040 | hey! I'm PocketLM. | PocketLM. | oof. that's rough. what went wrong? | what do you call cheese that isn't yours? | I don't know that one. you could look that on… |
+| `50k-real` | dev | 48,416 | hey there — PocketLM. | dea what's it doing? | ah, that sucks. want to tell me what happened? | why did the computer go to the doctor? | no idea, honestly. want to ask me something else? |
+| `500k-real` | dev | 491,040 | hey! I'm PocketLM. | PocketLM. | oof. that's rough. what went wrong? | what do you call cheese that isn't yours? | I don't know that one. you could look that one up. |
 
 **Reading it.** 984 parameters buy English-*shaped* noise — word fragments,
 apostrophes in plausible places, question marks ending questions. Around 10K
@@ -54,10 +54,9 @@ Three cross-branch comparisons are worth the width of the table:
 `1k`, are the failures documented in [Results](#results) and
 [`testing/`](testing/README.md).
 
-> Only the seven `main` checkpoints ship in this repo (`checkpoints/*.npz`,
-> 2.9 MB total). The `dev` and `testing` rows are reproducible from their
-> branch READMEs — their weights are gitignored, since each branch keeps its
-> artefacts out of everyone else's working tree.
+> **Every model above ships in [`models/`](models/)** — 14 self-contained
+> `.npz` files, 4 MB total, each runnable with numpy alone:
+> `python runtime_numpy.py --model models/main/500k.npz`
 
 ## The family
 
@@ -115,11 +114,11 @@ make train MODEL=50k             # ~13 min on an M1 (MLX auto-detected)
 make chat  MODEL=50k
 ```
 
-Run a trained model with **no torch installed**:
+Or skip training — every model is in [`models/`](models/) and runs with
+**no torch installed**:
 
 ```bash
-python export.py --model 50k
-python runtime_numpy.py --model checkpoints/50k.pocketlm.npz
+python runtime_numpy.py --model models/main/500k.npz
 ```
 
 `runtime_numpy.py` reimplements the forward pass — RMSNorm, RoPE, GQA, SwiGLU —
@@ -185,6 +184,7 @@ teacher-generated conversations; the schema is identical.
 
 ## More
 
+- [`models/`](models/README.md) — all 14 trained models, what each one is, which to pick
 - [`docs/DESIGN.md`](docs/DESIGN.md) — parameter budgets, tokenizer, curriculum,
   evaluation methodology, full results, repository layout
 - [`dev/README.md`](dev/README.md) — real corpora, licences, noisy-input training

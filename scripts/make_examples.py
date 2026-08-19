@@ -42,9 +42,10 @@ MODELS = [
 ]
 
 
-def cell(text: str, width: int = 46) -> str:
-    text = text.replace("|", "\\|").replace("\n", " ")
-    return text if len(text) <= width else text[:width - 1] + "…"
+def cell(text: str) -> str:
+    """Escape for a markdown table. Never truncate — a clipped reply hides
+    exactly the rambling that distinguishes a small model from a good one."""
+    return text.replace("|", "\\|").replace("\n", " ").strip()
 
 
 def main() -> None:

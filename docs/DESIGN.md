@@ -387,6 +387,9 @@ scripts/train_tokenizer.py   BPE training, one tokenizer per vocab size
 scripts/distill.py           teacher-model distillation
 scripts/make_examples.py     runs one prompt set through every checkpoint
 
+models/                all 14 trained models as portable .npz, by branch
+models/README.md       what each one is and which to pick
+
 eval/make_evalset.py   builds the 900 held-out prompts
 eval/evaluate.py       scoring + blind A/B
 eval/conversations.json

@@ -10,6 +10,8 @@ __pycache__/
 # without torch.
 checkpoints/*.pt
 checkpoints/*.log
+checkpoints/*.npz
+checkpoints/memory.json
 eval/results/
 
 # The bootstrap corpus is generated deterministically from a seed:
@@ -29,3 +31,7 @@ dev/data/
 dev/checkpoints/
 dev/*.log
 dev/__pycache__/
+
+# models/ is the published home for every trained model — deliberately
+# tracked, unlike the per-branch working directories above.
+!models/

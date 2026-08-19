@@ -43,4 +43,4 @@ export:
 	$(PY) export.py --model $(MODEL)
 
 clean:
-	rm -f checkpoints/*.pt checkpoints/*.npz checkpoints/*.log
+	rm -f checkpoints/*.pt checkpoints/*.log

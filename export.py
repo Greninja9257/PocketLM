@@ -2,7 +2,7 @@
 """Export a checkpoint to fp16 weights + the tokenizer, and check the size.
 
     python export.py --model 50k
-    -> checkpoints/50k.pocketlm.npz  (~99 KB)
+    -> models/main/50k.npz  (~98 KB)
 
 The point of the exercise: 48,416 params x 2 bytes is 94.6 KB. Anything much
 larger than that in the exported file is overhead worth knowing about.
@@ -27,7 +27,8 @@ def main() -> None:
     args = ap.parse_args()
 
     ckpt = args.checkpoint or f"checkpoints/{args.model}.pt"
-    out = Path(args.out or ckpt.replace(".pt", ".pocketlm.npz"))
+    out = Path(args.out or f"models/main/{args.model}.npz")
+    out.parent.mkdir(parents=True, exist_ok=True)
 
     model, tok = load(ckpt, torch.device("cpu"))
     arrays = {k: v.detach().cpu().numpy().astype(np.float16)
