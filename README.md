@@ -178,6 +178,7 @@ Two experimental branches, both merged here so the code ships with the project:
 |---|---|---|
 | [`dev/`](dev/README.md) | does real data beat templates? | yes, above ~500K |
 | [`testing/`](testing/README.md) | are the configs optimal? | no — 5–20% was on the table |
+| [`testing/`](testing/README.md) | how far does more data take 1M? | 2.89 → 1.35 bits/char, but it costs identity |
 
 **`dev/`** swaps the generator for 11 MB of real Hugging Face dialogue (37,222
 distinct user turns against 280) and corrupts user turns with typos and
@@ -192,6 +193,15 @@ also produced the project's most useful negative result — the 10K winner has
 better perplexity and a *worse* chatbot, because `vocab=192` crosses the
 case-folding threshold. The search optimised its proxy perfectly; the proxy was
 wrong.
+
+It also holds [`1m-best`](testing/README.md#3-scaling-the-data--testingtrain_1m_bestpy),
+the largest model the project's own findings can justify: 984,448 parameters on
+26 MB of real dialogue. Bits per character more than halves against the shipped
+`1m` (2.89 → **1.35**, below Pythia-70M at 71x fewer parameters) and echoing
+drops from 71% of replies to 31%. But `persona_chat` teaches first-person human
+personas, so it answers "do you like pizza?" with *"i love to go to the
+casino"* — a fabricated human life that costs it 21 points of name accuracy.
+**More data is not automatically better data.**
 
 Each branch keeps its corpora and models inside its own directory, so checking
 one out never disturbs another.

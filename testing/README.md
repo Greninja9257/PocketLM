@@ -1,16 +1,18 @@
-# testing — how smart can 1K and 10K get?
+# testing — how smart can a fixed parameter budget get?
 
 Experimental branch. Everything here writes to `testing/data/` and
 `testing/checkpoints/`, both gitignored, so nothing touches the shared `data/`
 or `checkpoints/` that `main`'s released models depend on.
 
-Trained on the **templated** corpus, deliberately. The `dev` branch established
-that 11 MB of real human dialogue is above the learning floor for models this
-size — a 9.5K model trained on it produces "It's him. What." — so the question
-here is how much can be extracted from a narrow, learnable distribution.
+The 1K and 10K work is trained on the **templated** corpus, deliberately. The
+`dev` branch established that 11 MB of real human dialogue is above the
+learning floor for models this size — a 9.5K model trained on it produces
+"It's him. What." — so the question there is how much can be extracted from a
+narrow, learnable distribution.
 
-Two levers were tested: **where the parameters go**, and **knowledge
-distillation**. One worked.
+Three levers were tested: **where the parameters go**, **knowledge
+distillation**, and **how much data a 1M model can absorb**. The first works,
+the second does not, and the third splits in a way worth reading carefully.
 
 ---
 
@@ -173,6 +175,98 @@ the obvious next experiment, and it needs `dev`'s data rather than this branch's
 
 ---
 
+## 3. Scaling the data — `testing/train_1m_best.py`
+
+The 1K and 10K experiments above are about spending a tiny budget well. This
+one asks the opposite question: given the largest budget in the family, how
+smart can it get if the *data* stops being the constraint?
+
+Every choice is taken from a measurement made elsewhere in the repo:
+
+| lever | change | the finding behind it |
+|---|---|---|
+| data | 26 MB real dialogue, 105,555 distinct user turns | `dev`: real data took 500K from 3.06 → 1.30 bits/char, beating any architecture change |
+| volume | 2.4x the `dev` branch (5.4M vs 2.0M tokens) | untested — the point of the experiment |
+| steps | full curriculum, not `STEPS_SCALE 0.35` | shipped `1m` has the family's lowest perplexity but regresses on the eval: undertrained, not worse |
+| geometry | 5 layers / `d_ff` 256, from 6 / 192 | the 10K sweep above: two layers beat three, budget worth more as FFN width |
+| vocabulary | 1280, from 1024 | at 1M the embedding is only ~13% of budget, and 1280 buys 2.98 chars/token on real text |
+
+984,448 parameters, 98.4% of budget, 210 minutes on MLX.
+
+### As a language model it is transformed
+
+| model | params | bits/char (dialogue) | distinct-2 | echo rate |
+|---|---|---|---|---|
+| shipped `1m` | 968,320 | 2.89 | 0.15 | 0.71 |
+| **`1m-best`** | 984,448 | **1.35** | **0.45** | **0.31** |
+| Pythia-70M | 70,426,624 | 1.52 | — | — |
+
+Bits per character more than halves, landing below Pythia-70M at **71x fewer
+parameters**. The repetition numbers matter as much: the shipped `1m` echoes
+the user's own words back in **seven replies out of ten**; this one does it in
+three, and produces three times as many distinct bigrams.
+
+### As a chatbot it regresses, for one identifiable reason
+
+Composite on the 900-prompt eval falls **0.406 → 0.374**, and `name_acc` falls
+**0.57 → 0.36**. The cause is visible in a single reply:
+
+```
+do you like pizza?
+  shipped 1m:  ooh, I'm PocketLM.
+  1m-best:     i've a lot of time watching sports, but i love to go to
+               the casino.
+```
+
+**`persona_chat` teaches first-person human personas.** 9,236 conversations of
+people describing invented human lives — hobbies, jobs, families — and the
+model learned to do the same. That directly contradicts the assistant identity
+the `personality` phase is installing, and it is the whole `name_acc` drop in
+one mechanism.
+
+The same data also helps, on exactly the questions the templated corpus never
+taught:
+
+```
+what's the capital of France?
+  shipped 1m:  I'll say foxes. what about you?      <- confident nonsense
+  1m-best:     not something I know.                <- correct refusal
+```
+
+### The composite metric flatters the shipped model
+
+Ranking these two by composite alone says the old model is better. That
+ranking is dominated by `name_acc` — which rewards reciting a memorised
+template — and it does not penalise the echoing and repetition that `1m-best`
+halves. One model recites and the other converses, and the number hides it.
+
+This is the *same failure* as the 10K sweep in section 1, inverted. There, a
+config with better perplexity lost the behavioural eval. Here, a model with far
+better language modelling loses a behavioural eval that is measuring template
+compliance. **Both times the objective was the problem, not the model.**
+
+### What the extra scale did not buy
+
+| model | params | bits/char |
+|---|---|---|
+| `500k-dev` | 491,040 | **1.30** |
+| `1m-best` | 984,448 | 1.35 |
+
+`1m-best` does not beat the `dev` branch's 500K despite **2x the parameters and
+2.4x the data**. The comparison is partly confounded — the test text is drawn
+from the templated dialogue set, and `1m-best` saw proportionally less of it —
+but there is no evidence here that the extra scale paid for itself.
+
+### Next
+
+Drop `persona_chat` and retrain. It is the one source actively fighting the
+identity training, it is ~4 MB of the 26 MB, and the other three sources carry
+no first-person human personas. The expectation is that `name_acc` recovers
+most of the way to 0.57 while the language-modelling gains survive, since they
+come from volume and variety rather than from that source specifically.
+
+---
+
 ## Practical recommendation
 
 For a better 1K model today, in order of measured effect:
@@ -188,3 +282,20 @@ The two sweeps agree on the underlying lesson: **the shipped configs spend too
 much on the embedding table and on depth, and too little on FFN width.** That
 is a systematic bias in how the family was hand-designed, and it very likely
 applies to the larger members too — worth sweeping 50K and 100K next.
+
+For a better **1M** model, the order is different, because at that size the
+data is the binding constraint rather than the geometry:
+
+1. **Use real dialogue.** 2.89 → 1.35 bits/char, larger than every
+   architecture effect measured on this branch combined.
+2. **Train the full curriculum.** The shipped `1m` is undertrained at
+   `STEPS_SCALE 0.35`.
+3. **Filter the sources for identity conflicts.** `persona_chat` costs 21
+   points of `name_acc`. More data is not automatically better data.
+
+The recurring lesson across all three experiments is about **objectives, not
+models**: twice now the metric being optimised has disagreed with the thing
+actually wanted. Validation loss picked a config that could not spell its own
+name; the behavioural composite prefers a model that recites over one that
+converses. Any future search on this branch should score candidates on the
+behaviour it wants, and read more than one number.
