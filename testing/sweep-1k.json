@@ -1,0 +1,230 @@
+[
+ {
+  "config": {
+   "name": "v40-d8-L1-ff16-h2",
+   "arch": "transformer",
+   "vocab_size": 40,
+   "context_length": 64,
+   "d_model": 8,
+   "n_layers": 1,
+   "n_heads": 2,
+   "n_kv_heads": 2,
+   "d_ff": 16,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 1000
+  },
+  "params": 984,
+  "val_loss": 2.305210053920746
+ },
+ {
+  "config": {
+   "name": "v40-d8-L1-ff16-h1",
+   "arch": "transformer",
+   "vocab_size": 40,
+   "context_length": 64,
+   "d_model": 8,
+   "n_layers": 1,
+   "n_heads": 1,
+   "n_kv_heads": 1,
+   "d_ff": 16,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 1000
+  },
+  "params": 984,
+  "val_loss": 2.310357689857483
+ },
+ {
+  "config": {
+   "name": "v48-d8-L1-ff12-h1",
+   "arch": "transformer",
+   "vocab_size": 48,
+   "context_length": 64,
+   "d_model": 8,
+   "n_layers": 1,
+   "n_heads": 1,
+   "n_kv_heads": 1,
+   "d_ff": 12,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 1000
+  },
+  "params": 952,
+  "val_loss": 2.4156307101249697
+ },
+ {
+  "config": {
+   "name": "v48-d8-L1-ff12-h2",
+   "arch": "transformer",
+   "vocab_size": 48,
+   "context_length": 64,
+   "d_model": 8,
+   "n_layers": 1,
+   "n_heads": 2,
+   "n_kv_heads": 2,
+   "d_ff": 12,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 1000
+  },
+  "params": 952,
+  "val_loss": 2.4177208304405213
+ },
+ {
+  "config": {
+   "name": "v40-d8-L1-ff12-h2",
+   "arch": "transformer",
+   "vocab_size": 40,
+   "context_length": 64,
+   "d_model": 8,
+   "n_layers": 1,
+   "n_heads": 2,
+   "n_kv_heads": 2,
+   "d_ff": 12,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 1000
+  },
+  "params": 888,
+  "val_loss": 2.418775498867035
+ },
+ {
+  "config": {
+   "name": "v64-d8-L1-ff8-h1",
+   "arch": "transformer",
+   "vocab_size": 64,
+   "context_length": 64,
+   "d_model": 8,
+   "n_layers": 1,
+   "n_heads": 1,
+   "n_kv_heads": 1,
+   "d_ff": 8,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 1000
+  },
+  "params": 984,
+  "val_loss": 2.435200107097626
+ },
+ {
+  "config": {
+   "name": "v40-d8-L1-ff12-h1",
+   "arch": "transformer",
+   "vocab_size": 40,
+   "context_length": 64,
+   "d_model": 8,
+   "n_layers": 1,
+   "n_heads": 1,
+   "n_kv_heads": 1,
+   "d_ff": 12,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 1000
+  },
+  "params": 888,
+  "val_loss": 2.437820279598236
+ },
+ {
+  "config": {
+   "name": "v64-d8-L1-ff8-h2",
+   "arch": "transformer",
+   "vocab_size": 64,
+   "context_length": 64,
+   "d_model": 8,
+   "n_layers": 1,
+   "n_heads": 2,
+   "n_kv_heads": 2,
+   "d_ff": 8,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 1000
+  },
+  "params": 984,
+  "val_loss": 2.461460280418396
+ },
+ {
+  "config": {
+   "name": "v56-d8-L1-ff8-h2",
+   "arch": "transformer",
+   "vocab_size": 56,
+   "context_length": 64,
+   "d_model": 8,
+   "n_layers": 1,
+   "n_heads": 2,
+   "n_kv_heads": 2,
+   "d_ff": 8,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 1000
+  },
+  "params": 920,
+  "val_loss": 2.465667688846588
+ },
+ {
+  "config": {
+   "name": "v56-d8-L1-ff8-h1",
+   "arch": "transformer",
+   "vocab_size": 56,
+   "context_length": 64,
+   "d_model": 8,
+   "n_layers": 1,
+   "n_heads": 1,
+   "n_kv_heads": 1,
+   "d_ff": 8,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 1000
+  },
+  "params": 920,
+  "val_loss": 2.4839629173278808
+ },
+ {
+  "config": {
+   "name": "v64-d8-L1-ff4-h2",
+   "arch": "transformer",
+   "vocab_size": 64,
+   "context_length": 64,
+   "d_model": 8,
+   "n_layers": 1,
+   "n_heads": 2,
+   "n_kv_heads": 2,
+   "d_ff": 4,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 1000
+  },
+  "params": 888,
+  "val_loss": 2.6005547404289246
+ },
+ {
+  "config": {
+   "name": "v64-d8-L1-ff4-h1",
+   "arch": "transformer",
+   "vocab_size": 64,
+   "context_length": 64,
+   "d_model": 8,
+   "n_layers": 1,
+   "n_heads": 1,
+   "n_kv_heads": 1,
+   "d_ff": 4,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 1000
+  },
+  "params": 888,
+  "val_loss": 2.6270358204841613
+ }
+]

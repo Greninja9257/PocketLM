@@ -16,3 +16,16 @@ eval/results/
 #   make data      (scripts/build_corpus.py --seed 7)
 # 21 MB of slot-filled templates is not worth versioning; the generator is.
 data/
+
+# Per-branch working directories. Each experimental branch keeps its generated
+# corpora and models under its own directory, and none of it is committed —
+# these are ignored on every branch so that checking one out never drags
+# another's artefacts into the tree.
+testing/data/
+testing/checkpoints/
+testing/*.log
+testing/__pycache__/
+dev/data/
+dev/checkpoints/
+dev/*.log
+dev/__pycache__/
