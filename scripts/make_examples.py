@@ -108,6 +108,11 @@ def main() -> None:
     ap.add_argument("--samples", type=int, default=DEFAULT_SAMPLES,
                     help="draws per prompt in --mode best")
     ap.add_argument("--data", default="data", help="corpus used to build the lexicon")
+    ap.add_argument("--dump", default=None,
+                    help="write every draw to JSON for review instead of picking")
+    ap.add_argument("--selections", default=None,
+                    help="JSON of {model: [draw_index per prompt]} — renders exactly "
+                         "those draws, so a hand-picked table stays reproducible")
     args = ap.parse_args()
     if args.mode == "greedy":
         args.temperature, args.samples = 0.0, 1
@@ -115,6 +120,10 @@ def main() -> None:
     lexicon = build_lexicon(args.data) if args.mode == "best" else set()
     if lexicon:
         print(f"lexicon: {len(lexicon):,} words from {args.data}\n")
+
+    import json as _json
+    selections = _json.loads(Path(args.selections).read_text()) if args.selections else None
+    all_draws = {}
 
     rows = []
     for path, label, branch, note in MODELS:
@@ -131,8 +140,13 @@ def main() -> None:
                 mgr = ConversationManager(model, tok, memory=Memory(),
                                           sampling=cfg, seed=args.seed + k)
                 draws.append(mgr.reply(prompt))
-            best = (max(draws, key=lambda d: fluency(d, lexicon))
-                    if args.mode == "best" else draws[0])
+            all_draws.setdefault(label, []).append(draws)
+            if selections and label in selections:
+                best = draws[selections[label][len(replies)]]
+            elif args.mode == "best":
+                best = max(draws, key=lambda d: fluency(d, lexicon))
+            else:
+                best = draws[0]
             replies.append(best)
         rows.append((label, branch, note, model.n_params(), replies))
         print(f"  {label:<12} {branch:<8} {model.n_params():>9,}p  ok", flush=True)
@@ -143,8 +157,12 @@ def main() -> None:
     for label, branch, note, n, replies in rows:
         lines.append("| `" + label + "` | " + branch + " | " + f"{n:,}" + " | "
                      + " | ".join(cell(r) for r in replies) + " |")
+    if args.dump:
+        Path(args.dump).write_text(_json.dumps(
+            {"prompts": PROMPTS, "draws": all_draws}, indent=1))
+        print(f"\nwrote {args.dump} ({args.samples} draws per prompt per model)")
     Path(args.out).write_text("\n".join(lines) + "\n")
-    print(f"\nwrote {args.out}")
+    print(f"wrote {args.out}")
 
 
 if __name__ == "__main__":

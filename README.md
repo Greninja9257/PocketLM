@@ -11,47 +11,45 @@
 
 ## What it sounds like
 
-Every trained checkpoint, same five prompts. Each cell is the **best of 12
-draws**, chosen by a mechanical fluency score — real words, no repetition,
-complete sentence, brevity — so no reply here was hand-picked:
+Every trained checkpoint, same five prompts. Each cell is the best of 12 draws
+at the normal chat temperature, **chosen by hand** for correct intent first and
+fluency second. The picks are recorded in
+[`scripts/examples-selected.json`](scripts/examples-selected.json), so the exact
+table regenerates:
 
 ```bash
-python scripts/make_examples.py --mode best --samples 12
-python scripts/make_examples.py --mode greedy          # deterministic instead
+python scripts/make_examples.py --selections scripts/examples-selected.json
+python scripts/make_examples.py --mode greedy     # deterministic, unpicked
 ```
 
 | model | branch | params | hey | what's your name? | I'm having a rough day | tell me a joke | what's the capital of Chad? |
 |---|---|---|---|---|---|---|---|
-| `1k` | main | 984 | hi. | now it cet you? | se you thello band phat's sod? | for dell abt. | hing it? |
-| `5k` | main | 4,944 | hey you. | hey! what's up? | hey! i'm pocketlm. | hey! i'm pocketlm. | hey, up. |
-| `10k` | main | 9,584 | hey there — PocketLM. | PocketLM. | oh? how'd it go? tell me more? | fair enough. want to tell me more? | couldn't tell you. |
-| `50k` | main | 48,416 | hey there — PocketLM. | PocketLM, at your service. | ugh, sorry. how are you holding up? | what do you call a sleeping bull? | couldn't tell you. |
-| `100k` | main | 95,664 | hey there — PocketLM. | PocketLM, at your service. | oof. that's rough. what went wrong? | what do you call a sleeping bull? | I'd be guessing, so — no. |
-| `500k` | main | 491,040 | hey! I'm PocketLM. | I'm PocketLM — hi! | that's a bad one. do you want to talk about it? | what do you call cheese that isn't yours? | couldn't tell you. |
-| `1m` | main | 968,320 | hey! I'm PocketLM. | PocketLM! nice to meet you. | ah, that sucks. want to tell me what happened? | what do you call a sleeping bull? | I'd be guessing, so — no. |
-| `1k-best` | testing | 984 | here. | oing it? | that beaht what? | youthoobre st? what abl do that? | you m. be? |
-| `10k-best` | testing | 9,808 | hello! i'm pocketlm, what's up? | i'm pocketlm. | oof. that's rough. what went wrong? | what's orange and sounds like a parrot? | i don't know that one. |
-| `1k-kd` | testing | 984 | here. what? | dontlled gor ssor dor you. what yout? | going dor be p? | d sor. what gh it? | here. |
-| `10k-real` | dev | 9,584 | hello! | that's enough. I'm no. | nice. doing? | hey to be. doing it? what's yours? | Yeah? |
-| `10k-hybrid` | dev | 9,968 | hello! | no. what's up? | That's great. | oh? how'd that going to talk it? | I'm PocketLM. But I high. |
-| `50k-real` | dev | 48,416 | hey there — PocketLM. | I'm PocketLM. | oof. that's rough. what went wrong? | why did the scarecrow win an award? | nope, no clue. |
-| `500k-real` | dev | 491,040 | hey! I'm PocketLM. | it's PocketLM. | oof. that's rough. what went wrong? | why did the scarecrow win an award? | I don't know that one. I'm small. |
+| `1k` | main | 984 | hi. | what's bed? | wat? | for dell abt. | noo mes it? |
+| `5k` | main | 4,944 | hey! i'm pocketlm. | hey! pocketlm. | nice — how was it? what about you? | cool. what's on your mind? | hello! i'm pocketlm, what's up? |
+| `10k` | main | 9,584 | hello! I'm PocketLM, what's up? | I'm PocketLM! | ugh, sorry. how are you holding up? | why did the scarecrow win an award? | I don't know that one. want to ask me something else? |
+| `50k` | main | 48,416 | hello! I'm PocketLM, what's up? | my name's PocketLM. | oof. that's rough. what went wrong? | why did the scarecrow win an award? | nope, no clue. you could look that one up. |
+| `100k` | main | 95,664 | hello! I'm PocketLM, what's up? | I'm PocketLM — hi! | ah, that sucks. want to tell me what happened? | why did the computer go to the doctor? | not something I know. you could look that one up. |
+| `500k` | main | 491,040 | hello! I'm PocketLM, what's up? | I'm PocketLM — hi! | ah, that sucks. want to tell me what happened? | what do you call cheese that isn't yours? | not something I know. want to ask me something else? |
+| `1m` | main | 968,320 | hello! I'm PocketLM, what's up? | PocketLM! nice to meet you. | ah, that sucks. want to tell me what happened? | why don't skeletons fight? | I don't know that one. want to ask me something else? |
+| `1k-best` | testing | 984 | her one. | oing it? | you m. | heret cket you? | goor? |
+| `10k-best` | testing | 9,808 | hello! i'm pocketlm, what's up? | i'm pocketlm. | oof. that's rough. what went wrong? | what's orange and sounds like a parrot? | i'd be guessing, so — no. want to ask me something else? |
+| `1k-kd` | testing | 984 | helom socket? | sont? | se yout? | senet torket? | here. |
+| `10k-real` | dev | 9,584 | hey! I'm PocketLM. | that's enough. I'm no. | oh? what's it go? how about you? | sounds about right. | Oh no. |
+| `10k-hybrid` | dev | 9,968 | hello! | oh? how'd it go? what about you? | oh? how'd it go? | oh? how'd it go? | That's great. |
+| `50k-real` | dev | 48,416 | hey! I'm PocketLM. | I'm PocketLM. | oof. that's rough. what went wrong? | why did the computer go to the doctor? | that's outside what I know. |
+| `500k-real` | dev | 491,040 | hello! I'm PocketLM, what's up? | PocketLM! nice to meet you. | oof. that's rough. what went wrong? | what do you call cheese that isn't yours? | I don't know that one. want to ask me something else? |
 
 **Reading it.** 984 parameters buy English-*shaped* noise — word fragments,
-apostrophes in plausible places, question marks ending questions. Around 10K
-the replies become real sentences. By 500K the model holds a conversation and
-declines what it doesn't know.
+apostrophes in plausible places, question marks ending questions. `5k` produces
+real words in the wrong order. From `10k` up, every reply is a real sentence,
+the jokes are real jokes, and the model declines the question it cannot answer.
 
-Two honest caveats, because this is a **best-case** table:
-
-- **Typical output is worse.** These models vary a lot between draws. On the
-  last prompt `10k` gives a clean refusal in 10 of 12 samples — but the other
-  two are *"couldn't tell you. want to T good."* and *"cat tgh. what about
-  you?"*. Use `--mode greedy` for what a model actually believes, or just chat
-  with one.
-- **The scorer rewards fluency, not correctness.** It picked *"fair enough.
-  want to tell me more?"* as `10k`'s best answer to "tell me a joke" — smooth,
-  and not a joke. Greedy decoding gets an actual joke out of the same model.
+**This is a best case, and the gap matters.** These models vary a lot between
+draws. On the last prompt `10k` refuses cleanly in 10 of 12 samples — the other
+two are *"couldn't tell you. want to T good."* and *"cat tgh. what about
+you?"*. `500k` is the most consistent: 11 of its 12 draws on "I'm having a
+rough day" are the same good reply. Use `--mode greedy`, or just chat with one,
+to see the unfiltered version.
 
 > **Every model above ships in [`models/`](models/)** — 14 self-contained
 > `.npz` files, 4 MB total, each runnable with numpy alone:
