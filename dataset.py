@@ -131,15 +131,32 @@ class Corpus:
         return "\n".join(lines)
 
 
+# "language" is packed as raw text; everything else is conversations.
+TEXT_SOURCES = {"language"}
+
+
+def discover_sources(data_dir: str, split: str = "train") -> List[str]:
+    """Any data/<name>/<split>.jsonl is a source.
+
+    Scanning beats a hardcoded list so that new corpora -- data/real,
+    data/real_noisy -- are picked up without touching this file.
+    """
+    root = Path(data_dir)
+    if not root.exists():
+        return []
+    return sorted(d.name for d in root.iterdir()
+                  if d.is_dir() and (d / f"{split}.jsonl").exists())
+
+
 def build_corpus(data_dir: str, tok: BPETokenizer, ctx: int, split: str = "train",
                  seed: int = 0) -> Corpus:
     root = Path(data_dir)
     sources: Dict[str, Source] = {}
-    for name in ("language", "dialogue", "behavior", "personality", "synthetic"):
+    for name in discover_sources(data_dir, split):
         rows = load_rows(root / name / f"{split}.jsonl")
         if not rows:
             continue
-        if name == "language":
+        if name in TEXT_SOURCES:
             examples = pack_text(rows, tok, ctx)
         else:
             examples = [e for e in (encode_conversation(r, tok, ctx) for r in rows) if e]

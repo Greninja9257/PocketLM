@@ -34,12 +34,13 @@ def iter_text(data_dir: Path):
                 yield row["memory"]
 
 
-def train_one(texts, chars, vocab_size: int, min_symbol_count: int, quiet: bool) -> None:
+def train_one(texts, chars, vocab_size: int, min_symbol_count: int, quiet: bool,
+              out_dir: str = "checkpoints") -> None:
     lowercase = vocab_size < LOWERCASE_BELOW_VOCAB
     print(f"\n=== vocab {vocab_size}{'  (lowercase)' if lowercase else ''}")
     tok = BPETokenizer.train(texts, vocab_size, min_symbol_count=min_symbol_count,
                              lowercase=lowercase, verbose=not quiet)
-    out = tokenizer_path(vocab_size)
+    out = str(Path(out_dir) / Path(tokenizer_path(vocab_size)).name)
     tok.save(out)
 
     n_tokens = sum(len(tok.encode(t)) for t in texts)
@@ -66,6 +67,8 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--data", default="data")
+    ap.add_argument("--out-dir", default="checkpoints",
+                    help="where to write the tokenizers (dev uses dev/checkpoints)")
     ap.add_argument("--vocab-size", type=int, default=None,
                     help="train just this one size (default: every size in the family)")
     ap.add_argument("--min-symbol-count", type=int, default=20)
@@ -77,7 +80,8 @@ def main() -> None:
     print(f"corpus: {len(texts):,} strings / {chars:,} chars")
 
     for vocab_size in ([args.vocab_size] if args.vocab_size else VOCAB_SIZES):
-        train_one(texts, chars, vocab_size, args.min_symbol_count, args.quiet)
+        train_one(texts, chars, vocab_size, args.min_symbol_count, args.quiet,
+                  args.out_dir)
 
 
 if __name__ == "__main__":

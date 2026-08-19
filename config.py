@@ -224,6 +224,22 @@ PHASES: List[Phase] = [
     Phase("personality", ["personality"],           steps=1500, lr=5e-4),
 ]
 
+# The dev curriculum: real human dialogue carries the language and conversation
+# phases, and the synthetic generator is kept only for what real corpora cannot
+# supply -- PocketLM's own name, and <mem>-grounded memory questions. That is
+# the "mostly not synthetic" split: ~11 MB of real conversation against a much
+# smaller persona set.
+DEV_PHASES: List[Phase] = [
+    Phase("language",    ["real_noisy"],                     steps=3000, lr=3e-3,
+          loss_on="all"),
+    Phase("dialogue",    ["real_noisy", "dialogue"],         steps=7000, lr=2e-3,
+          weights={"real_noisy": 4.0, "dialogue": 1.0}),
+    Phase("behavior",    ["real_noisy", "behavior"],         steps=3000, lr=1e-3,
+          weights={"real_noisy": 2.0, "behavior": 3.0}),
+    Phase("personality", ["personality", "real_noisy"],      steps=2000, lr=5e-4,
+          weights={"personality": 3.0, "real_noisy": 1.0}),
+]
+
 
 # Learning rate scales down as models get wider; 3e-3 is far too hot for 1M.
 LR_SCALE: Dict[str, float] = {"1k": 1.5, "5k": 1.3, "10k": 1.2, "50k": 1.0,

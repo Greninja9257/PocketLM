@@ -16,3 +16,12 @@ eval/results/
 #   make data      (scripts/build_corpus.py --seed 7)
 # 21 MB of slot-filled templates is not worth versioning; the generator is.
 data/
+
+# dev branch: fetch/tokenizer logs and pycache
+dev/*.log
+dev/__pycache__/
+
+# dev branch artefacts: everything the dev branch generates stays under dev/
+# and is never committed or shared with main's working tree.
+dev/data/
+dev/checkpoints/

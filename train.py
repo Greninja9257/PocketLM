@@ -25,7 +25,8 @@ from pathlib import Path
 
 import torch
 
-from config import LR_SCALE, PHASES, PRESETS, STEPS_SCALE, ModelConfig, TrainConfig
+from config import (DEV_PHASES, LR_SCALE, PHASES, PRESETS, STEPS_SCALE,
+                    ModelConfig, TrainConfig)
 from dataset import build_corpus
 from model import build_model, describe
 from tokenizer import BPETokenizer
@@ -143,6 +144,9 @@ def main() -> None:
                     help="multiply every phase's step count (0.05 for a smoke test); "
                          "defaults to the per-size scale in config.STEPS_SCALE")
     ap.add_argument("--phases", default=None, help="comma-separated subset of phase names")
+    ap.add_argument("--curriculum", default="default", choices=["default", "dev"],
+                    help="'dev' trains on real dialogue (data/real_noisy) instead "
+                         "of the synthetic generator")
     ap.add_argument("--lr-scale", type=float, default=None,
                     help="override the per-size learning-rate multiplier")
     ap.add_argument("--seed", type=int, default=TrainConfig.seed)
@@ -191,7 +195,8 @@ def main() -> None:
     log = []
     if backend == "mlx":
         import train_mlx
-    for phase in PHASES:
+    curriculum = DEV_PHASES if args.curriculum == "dev" else PHASES
+    for phase in curriculum:
         if wanted and phase.name not in wanted:
             continue
         scaled = type(phase)(phase.name, phase.sources,
