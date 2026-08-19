@@ -51,12 +51,25 @@ def legend_width(label: str) -> float:
 
 
 def x_axis(o, t, x0, w, y):
-    """Decade ticks, identical in both panels."""
+    """Decade ticks plus minor ticks, identical in both panels.
+
+    The minor ticks are the point: without them a log axis invites being read
+    as linear, which puts the midpoint between 1M and 10M at 5.5M instead of
+    the true 3.16M and makes every reference model look ~2x bigger than it is.
+    """
+    for value, _ in DECADES:
+        for k in range(2, 10):                      # 2x .. 9x within the decade
+            minor = value * k
+            if not (AXIS_LO < minor < AXIS_HI):
+                continue
+            x = lx(minor, x0, w)
+            o.append(f'<line x1="{x:.1f}" y1="{y}" x2="{x:.1f}" y2="{y+2.5}" '
+                     f'stroke="{t["grid"]}" stroke-width="1"/>')
     for value, name in DECADES:
         x = lx(value, x0, w)
-        o.append(f'<line x1="{x:.1f}" y1="{y}" x2="{x:.1f}" y2="{y+4}" '
-                 f'stroke="{t["grid"]}" stroke-width="1"/>')
-        o.append(f'<text x="{x:.1f}" y="{y+16}" fill="{t["ink2"]}" font-size="9.5" '
+        o.append(f'<line x1="{x:.1f}" y1="{y}" x2="{x:.1f}" y2="{y+5}" '
+                 f'stroke="{t["ink2"]}" stroke-width="1"/>')
+        o.append(f'<text x="{x:.1f}" y="{y+17}" fill="{t["ink2"]}" font-size="9.5" '
                  f'text-anchor="middle">{name}</text>')
 
 
@@ -152,14 +165,20 @@ def svg(theme_name: str) -> str:
         o.append(f'<text x="{x:.1f}" y="{y-11:.1f}" fill="{colour}" font-size="10" '
                  f'font-weight="600" text-anchor="middle">{r["dialogue"]:.2f}</text>')
 
-    # The reference models are named for a size they do not have --
-    # "TinyStories-1M" is 3.7M parameters -- so name each mark rather than let
-    # the reader assume the axis is wrong.
-    for r, name in zip(ts, ["TS-1M", "TS-3M"]):
+    # Marks carry their true parameter count. The models' own names disagree
+    # with it -- "TinyStories-1M" is 3.7M parameters -- and labelling the name
+    # made the axis look wrong.
+    for r, name in zip(ts, ["TinyStories-1M", "TinyStories-3M"]):
         x = lx(r["params"], x0, w)
         y = y0 + h - h * (r["dialogue"] - lo) / (hi - lo)
-        o.append(f'<text x="{x:.1f}" y="{y+18:.1f}" fill="{t["ink2"]}" font-size="9" '
-                 f'text-anchor="middle">{name}</text>')
+        o.append(f'<text x="{x:.1f}" y="{y+17:.1f}" fill="{t["ink2"]}" font-size="9" '
+                 f'text-anchor="middle">{r["params"]/1e6:.1f}M</text>')
+
+    # PocketLM's largest, labelled the same way for comparison.
+    x = lx(pk[-1]["params"], x0, w)
+    y = y0 + h - h * (pk[-1]["dialogue"] - lo) / (hi - lo)
+    o.append(f'<text x="{x:.1f}" y="{y+17:.1f}" fill="{t["ink2"]}" font-size="9" '
+             f'text-anchor="middle">0.97M</text>')
 
     x_axis(o, t, x0, w, y0 + h)
 
