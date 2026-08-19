@@ -423,6 +423,109 @@ scripts/distill.py           teacher-model distillation
 eval/make_evalset.py   builds the 900 held-out prompts
 eval/evaluate.py       scoring + blind A/B
 eval/conversations.json
+
+dev/fetch_hf.py        real dialogue from Hugging Face -> PocketLM JSONL
+dev/augment.py         typo / casing / shorthand noise on user turns
+dev/README.md          licences, and why each corpus is or isn't included
+
+testing/sweep.py           architecture search at a fixed parameter budget
+testing/train_teacher.py   a teacher sharing the student's vocabulary
+testing/distill_kd.py      Hinton KD, and the measurement of why it failed
+testing/sweep-1k.json      full ranked results
+testing/sweep-10k.json
+testing/README.md
+```
+
+
+---
+
+## Branches: three lines of work
+
+`main` is the released family. Two experimental branches ask questions it
+cannot answer on its own, and both are merged here so the code is available
+even though their generated corpora and checkpoints are not (each branch keeps
+those under its own gitignored directory — see below).
+
+| | `main` | `dev/` | `testing/` |
+|---|---|---|---|
+| **question** | how small can a chatbot be? | does real data beat templates? | are the configs any good? |
+| **corpus** | slot-filled generator, 280 distinct user turns | 11 MB real human dialogue, 37,222 distinct user turns | slot-filled (deliberately) |
+| **verdict** | ships 7 models, 1K–1M | **only above ~500K** | **yes, by 5–20%** |
+
+### `dev/` — real dialogue and noisy input
+
+The released models learned exact-string matching, not intent. `hello` works;
+`Hello`, `HELLO`, `helo` and `wats ur name` all fail. With only 280 distinct
+user turns in 95,054, there was nothing else to learn.
+
+`dev/fetch_hf.py` pulls four human-written Hugging Face corpora (OASST1,
+DailyDialog, EmpatheticDialogues, PersonaChat) and `dev/augment.py` corrupts
+**user turns only** — typos, casing, punctuation, `ur`/`u`/`pls` shorthand.
+That last part is free: `dataset.py` masks the loss to assistant tokens, so
+noise on the input side cannot degrade reply quality, and it costs no
+parameters at all.
+
+Measured on identity questions, clean surface form vs corrupted:
+
+| model | clean | noisy |
+|---|---|---|
+| `50k` on templates (main) | **100%** | 31% |
+| `50k` on real + noisy | 83% | 33% |
+| `500k` on real + noisy | **100%** | **42%** |
+
+**Real data needs capacity to pay off.** At 48K it is a net loss — 11 MB of
+human conversation is simply harder than templates, and the model gets worse at
+everything. At 491K it wins outright, beating the template-trained model on
+noisy input while matching it on clean. The floor is somewhere between.
+
+Below that floor the result is stark: a 9.5K model trained on real dialogue
+produces *"It's him. What."* — the same architecture reaches 51% name accuracy
+on templates. That is a statement about data difficulty, not about the model.
+
+### `testing/` — searching the parameter budget
+
+The family's configs were hand-designed: pick a width, pick a depth, solve
+`d_ff` for the remainder. `testing/sweep.py` enumerates every config that uses
+≥88% of a budget and ranks them, **treating vocabulary as a search dimension**
+because the embedding table (`vocab × d_model`) is the largest line item at
+these sizes.
+
+| budget | shipped | found by search | gain |
+|---|---|---|---|
+| 1K | `v64-d8-L1-ff8` (6th of 12) | `v40-d8-L1-ff16-h2` | **5.4%** |
+| 10K | `v256-d16-L3-ff16` (26th of 36) | `v192-d16-L2-ff48-h2` | **20.3%** |
+
+Both hand-picked configs are beaten at identical parameter count, and the 10K
+one badly. Two patterns fall out, and both contradict the family's design:
+**two layers beat three** (7 of the top 10 at 10K use `L=2`), and **two heads
+beat four** (every `h=4` variant loses to its `h=2` twin — at `d_model=16`,
+four heads means four 4-dimensional heads). The configs overspend on depth and
+embeddings and underspend on FFN width.
+
+The largest single effect, though, was not architectural: the 1K model was
+simply **undertrained**. Going from 1,200 to 4,000 steps moved validation loss
+2.31 → 2.05, more than any geometry change tested.
+
+Knowledge distillation was also tried, and **failed** — a 396K teacher sharing
+the student's vocabulary made it 16–22% worse. The teacher puts 96.7% mean
+probability on its top choice, with 91.7% of tokens above p>0.99. Distillation
+transfers a teacher's ranking of the answers it *rejected*; one that confident
+has none to give. The cause is the corpus, not the method, which predicts KD
+would work on `dev`'s real dialogue — the next experiment rather than a closed
+question.
+
+### Isolation
+
+Each branch writes only inside its own directory — `dev/data/`,
+`dev/checkpoints/`, `testing/data/`, `testing/checkpoints/` — all gitignored on
+every branch. That matters because those paths are *ignored*, so git will not
+clean them on a branch switch: a run that wrote into the shared `data/` or
+`checkpoints/` would silently corrupt `main`'s released models, which is
+exactly what happened once during development.
+
+```bash
+cd dev     && make all     # fetch real corpora, augment, train
+cd testing && python sweep.py --budget 10k
 ```
 
 ---
