@@ -47,13 +47,29 @@ def rope(x, cos, sin):
     return out
 
 
+def _dequantize(buf: np.ndarray, scale: np.ndarray, bits: int, shape) -> np.ndarray:
+    """Undo testing/quantize.py: unpack the codes, then rescale per row."""
+    n = int(np.prod(shape))
+    planes = np.unpackbits(buf)[: n * bits].reshape(n, bits).astype(np.int16)
+    vals = (planes << np.arange(bits - 1, -1, -1)).sum(axis=1) - (1 << (bits - 1))
+    return (vals.reshape(shape).astype(np.float32)
+            * scale.astype(np.float32).reshape(-1, 1))
+
+
 class NumpyPocketLM:
     def __init__(self, path: str):
         blob = np.load(path)
         meta = json.loads(bytes(blob["__meta__"]).decode())
         self.cfg = meta["config"]
         self.w: Dict[str, np.ndarray] = {
-            k: blob[k].astype(np.float32) for k in blob.files if k != "__meta__"}
+            k: blob[k].astype(np.float32) for k in blob.files
+            if k != "__meta__" and not k.endswith((".q", ".s"))}
+        # Quantized exports store bit-packed codes plus a per-row scale; unpack
+        # once here so every path downstream still sees ordinary float32.
+        qbits = meta.get("quant_bits")
+        for name, shape in meta.get("quant", {}).items():
+            self.w[name] = _dequantize(blob[name + ".q"], blob[name + ".s"],
+                                       qbits, tuple(shape))
         t = meta["tokenizer"]
         self.tok = BPETokenizer(t["alphabet"], [tuple(m) for m in t["merges"]],
                                 t["specials"], t.get("lowercase", False))

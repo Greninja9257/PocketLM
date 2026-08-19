@@ -267,6 +267,88 @@ come from volume and variety rather than from that source specifically.
 
 ---
 
+## 4. Quantization — `testing/quantize.py`
+
+The family measures itself in *parameters*, but what actually ships is a
+*file*, and the two stop tracking each other once the weights are not fp32.
+`1m-best` is 984,448 parameters and 1.79 MB on disk. How much of that is load
+bearing?
+
+Symmetric per-output-channel quantization, applied post-training to the 2D
+weight matrices. Per-channel rather than per-tensor because one badly scaled
+row otherwise sets the step size for the whole matrix; LayerNorm gains are 128
+values each and stay in fp16, where they cost nothing.
+
+| bits | file | vs fp16 | bits/char | Δ | composite |
+|---|---|---|---|---|---|
+| fp16 | 1,829,788 | 1.0x | 1.352 | — | 0.366 |
+| **8** | 973,736 | 1.9x | 1.354 | +0.002 | 0.330 |
+| **6** | **763,636** | **2.4x** | **1.355** | **+0.004** | 0.369 |
+| **4** | **464,709** | **3.9x** | 1.520 | +0.168 | 0.306 |
+| 3 | — | 4.9x | 2.764 | +1.413 | 0.195 |
+| 2 | — | 7.1x | 6.989 | +5.638 | — |
+
+**Six bits is free.** The file shrinks 2.4x and bits per character moves 0.004
+— three decimal places in. There is no argument for shipping fp16.
+
+**Four bits is the interesting point.** A **465 KB** file, 3.9x smaller, still
+at 1.52 bits/char — which is exactly Pythia-70M's score, from a model with
+**71x fewer parameters in a file you could attach to an email**. It is also
+still far ahead of the shipped `1m` (2.89) at a quarter of the size.
+
+**The cliff is between 4 and 3 bits**, and it is a cliff rather than a slope:
++0.168 then +1.413.
+
+### The embedding table is the fragile part
+
+| what is quantized | 4-bit | 3-bit | 2-bit |
+|---|---|---|---|
+| everything | +0.168 | +1.413 | +5.638 |
+| blocks only (embedding fp16) | +0.114 | +1.026 | +4.024 |
+| embedding only (blocks fp16) | +0.040 | +0.277 | +3.763 |
+
+The embedding is 16.6% of the parameters and contributes far more than 16.6% of
+the damage — at 2 bits it destroys the model *by itself* (+3.763) almost as
+thoroughly as quantizing everything else does (+4.024). Token identity is
+categorical, and rounding it is not like rounding a projection weight.
+
+But protecting it does not pay: keeping the embedding in fp16 at 4 bits costs
+235 KB to recover 0.054 bits/char, which buys back a third of the loss for half
+the file-size win. **Uniform 4-bit is the better trade.**
+
+### The behavioural composite is noisier than the differences being read from it
+
+The composite column above is non-monotonic — 6-bit appears to *beat* fp32, and
+8-bit appears to lose to both. That is not a real effect. Running the identical
+fp32 model under five different sampling seeds:
+
+```
+0.356   0.353   0.363   0.354   0.381        sigma 0.012, range 0.028
+```
+
+**Any composite difference under about 0.03 is noise.** That makes 8-bit and
+6-bit indistinguishable from fp32 behaviourally, 4-bit a modest real loss, and
+3-bit unambiguous.
+
+It also applies backwards, to section 3: the shipped `1m` scored 0.406 against
+`1m-best`'s 0.374, a gap of 0.032 — barely outside this noise band, and read
+here at one seed. That comparison is weaker evidence than it looked, and the
+bits-per-character gap (2.89 vs 1.35) is the one carrying real signal.
+
+### Shipping
+
+The quantized exports are real files, not simulated sizes: codes are bit-packed
+so 4-bit costs four bits, and `runtime_numpy.py` unpacks them on load. All three
+run with numpy and nothing else:
+
+```bash
+python testing/quantize.py --bits 6 --out models/testing/1m-best-q6.npz
+python runtime_numpy.py --model models/testing/1m-best-q4.npz --prompt "what's your name?"
+#   -> I'm PocketLM — hi!            465 KB, no torch
+```
+
+---
+
 ## Practical recommendation
 
 For a better 1K model today, in order of measured effect:
@@ -292,6 +374,9 @@ data is the binding constraint rather than the geometry:
    `STEPS_SCALE 0.35`.
 3. **Filter the sources for identity conflicts.** `persona_chat` costs 21
    points of `name_acc`. More data is not automatically better data.
+4. **Quantize to 6 bits, or 4 if size matters.** 2.4x smaller for +0.004
+   bits/char, or 3.9x smaller for +0.168. Nothing else on this branch buys a
+   comparable amount for as little.
 
 The recurring lesson across all three experiments is about **objectives, not
 models**: twice now the metric being optimised has disagreed with the thing
@@ -299,3 +384,8 @@ actually wanted. Validation loss picked a config that could not spell its own
 name; the behavioural composite prefers a model that recites over one that
 converses. Any future search on this branch should score candidates on the
 behaviour it wants, and read more than one number.
+
+Section 4 adds the third case, and the sharpest one: the composite's own
+run-to-run spread is 0.028, which is *wider than most of the differences this
+branch has been ranking models by*. Measuring that spread should have come
+before any of the comparisons, not after three of them.
