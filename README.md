@@ -11,9 +11,20 @@
 
 ## What it sounds like
 
-Every trained checkpoint, same five prompts. Each cell is the best of 12 draws
-at the normal chat temperature, **chosen by hand** for correct intent first and
-fluency second. The picks are recorded in
+Every trained checkpoint, same five prompts, best of 12 draws at the normal chat
+temperature. Picked by hand for **closeness to the expected answer, not for
+fluency** — a garbled reply that does the right thing beats a clean one that
+doesn't:
+
+| prompt | expected |
+|---|---|
+| hey | a greeting |
+| what's your name? | states that it is PocketLM |
+| I'm having a rough day | acknowledges it, asks a follow-up |
+| tell me a joke | an actual joke |
+| what's the capital of Chad? | admits it doesn't know, without inventing |
+
+The picks are recorded in
 [`scripts/examples-selected.json`](scripts/examples-selected.json), so the exact
 table regenerates:
 
@@ -24,32 +35,40 @@ python scripts/make_examples.py --mode greedy     # deterministic, unpicked
 
 | model | branch | params | hey | what's your name? | I'm having a rough day | tell me a joke | what's the capital of Chad? |
 |---|---|---|---|---|---|---|---|
-| `1k` | main | 984 | hi. | what's bed? | wat? | for dell abt. | noo mes it? |
-| `5k` | main | 4,944 | hey! i'm pocketlm. | hey! pocketlm. | nice — how was it? what about you? | cool. what's on your mind? | hello! i'm pocketlm, what's up? |
+| `1k` | main | 984 | hi. | what's bed? | wat? | gont tht? | noo mes it? |
+| `5k` | main | 4,944 | hey! i'm pocketlm. | hey! pocketlm. | yehat, morgh tlst. want to sorrd out. witi? | cool. what's on your mind? | no, nicexticry. |
 | `10k` | main | 9,584 | hello! I'm PocketLM, what's up? | I'm PocketLM! | ugh, sorry. how are you holding up? | why did the scarecrow win an award? | I don't know that one. want to ask me something else? |
 | `50k` | main | 48,416 | hello! I'm PocketLM, what's up? | my name's PocketLM. | oof. that's rough. what went wrong? | why did the scarecrow win an award? | nope, no clue. you could look that one up. |
 | `100k` | main | 95,664 | hello! I'm PocketLM, what's up? | I'm PocketLM — hi! | ah, that sucks. want to tell me what happened? | why did the computer go to the doctor? | not something I know. you could look that one up. |
 | `500k` | main | 491,040 | hello! I'm PocketLM, what's up? | I'm PocketLM — hi! | ah, that sucks. want to tell me what happened? | what do you call cheese that isn't yours? | not something I know. want to ask me something else? |
 | `1m` | main | 968,320 | hello! I'm PocketLM, what's up? | PocketLM! nice to meet you. | ah, that sucks. want to tell me what happened? | why don't skeletons fight? | I don't know that one. want to ask me something else? |
-| `1k-best` | testing | 984 | her one. | oing it? | you m. | heret cket you? | goor? |
+| `1k-best` | testing | 984 | heloockese. | sockericantl you od. cedo t stho? | that beaht what? | youthoobre st? what abl do that? | goor? |
 | `10k-best` | testing | 9,808 | hello! i'm pocketlm, what's up? | i'm pocketlm. | oof. that's rough. what went wrong? | what's orange and sounds like a parrot? | i'd be guessing, so — no. want to ask me something else? |
-| `1k-kd` | testing | 984 | helom socket? | sont? | se yout? | senet torket? | here. |
-| `10k-real` | dev | 9,584 | hey! I'm PocketLM. | that's enough. I'm no. | oh? what's it go? how about you? | sounds about right. | Oh no. |
-| `10k-hybrid` | dev | 9,968 | hello! | oh? how'd it go? what about you? | oh? how'd it go? | oh? how'd it go? | That's great. |
+| `1k-kd` | testing | 984 | helom socket? | ocket partll dor pomar m. | going dor be p? | y dor bething? | he dont? |
+| `10k-real` | dev | 9,584 | hey! I'm PocketLM. | I'm PocketLM. | oh? what's it go? how about you? | sounds about right. | I'm guessh watch you call. |
+| `10k-hybrid` | dev | 9,968 | hello! | I'm PocketLM, what's up? | oh? how'd it go? | oh? how'd it go? | I am not for the remce you. |
 | `50k-real` | dev | 48,416 | hey! I'm PocketLM. | I'm PocketLM. | oof. that's rough. what went wrong? | why did the computer go to the doctor? | that's outside what I know. |
 | `500k-real` | dev | 491,040 | hello! I'm PocketLM, what's up? | PocketLM! nice to meet you. | oof. that's rough. what went wrong? | what do you call cheese that isn't yours? | I don't know that one. want to ask me something else? |
 
-**Reading it.** 984 parameters buy English-*shaped* noise — word fragments,
-apostrophes in plausible places, question marks ending questions. `5k` produces
-real words in the wrong order. From `10k` up, every reply is a real sentence,
-the jokes are real jokes, and the model declines the question it cannot answer.
+**Reading it.** Scored this way the table shows where each capability *first
+appears*, which is more useful than which model reads best:
 
-**This is a best case, and the gap matters.** These models vary a lot between
-draws. On the last prompt `10k` refuses cleanly in 10 of 12 samples — the other
-two are *"couldn't tell you. want to T good."* and *"cat tgh. what about
-you?"*. `500k` is the most consistent: 11 of its 12 draws on "I'm having a
-rough day" are the same good reply. Use `--mode greedy`, or just chat with one,
-to see the unfiltered version.
+- **`1k`** never reaches an expected answer. `hi.` is a real greeting; the rest
+  is English-shaped noise. `noo mes it?` is the closest it gets to "no".
+- **`5k`** starts reaching. `hey! i'm pocketlm.` is its name, `no,
+  nicexticry.` is a refusal trying to happen, and `want to sorrd out.` is
+  *"want to talk it out"* through a broken tokenizer.
+- **`10k`** is the first size that does all five correctly.
+- **`50k` and up** differ in polish rather than capability.
+
+Two things this framing exposes that a fluency ranking hid: the `dev` 10K models
+*can* say "I'm PocketLM." — they just do it in 1 draw out of 12 — and jokes are
+the last capability to arrive, absent below 10K in every branch.
+
+**This is a best case.** On the last prompt `10k` refuses cleanly in 10 of 12
+draws; the other two are *"couldn't tell you. want to T good."* and *"cat tgh.
+what about you?"*. `500k` is markedly steadier — 11 of 12 identical replies to
+"I'm having a rough day" where `10k` scatters.
 
 > **Every model above ships in [`models/`](models/)** — 14 self-contained
 > `.npz` files, 4 MB total, each runnable with numpy alone:
