@@ -33,8 +33,26 @@ PAD_L, PAD_R, PAD_T, PAD_B = 52, 16, 52, 46
 PANEL_W = (W - 40) // 2
 
 
-def lx(p, x0, w, lo=900, hi=1.1e7):
+# One shared parameter axis for both panels. Labelling model names on the axis
+# was a mistake: PocketLM's "1m" (968K) and TinyStories-1M (3.7M) landed at two
+# different x positions while reading as the same number. Ticks are decades of
+# actual parameters; model identity belongs to the marks, not the axis.
+AXIS_LO, AXIS_HI = 800, 1.2e7
+DECADES = [(1e3, "1K"), (1e4, "10K"), (1e5, "100K"), (1e6, "1M"), (1e7, "10M")]
+
+
+def lx(p, x0, w, lo=AXIS_LO, hi=AXIS_HI):
     return x0 + w * (math.log10(p) - math.log10(lo)) / (math.log10(hi) - math.log10(lo))
+
+
+def x_axis(o, t, x0, w, y):
+    """Decade ticks, identical in both panels."""
+    for value, name in DECADES:
+        x = lx(value, x0, w)
+        o.append(f'<line x1="{x:.1f}" y1="{y}" x2="{x:.1f}" y2="{y+4}" '
+                 f'stroke="{t["grid"]}" stroke-width="1"/>')
+        o.append(f'<text x="{x:.1f}" y="{y+16}" fill="{t["ink2"]}" font-size="9.5" '
+                 f'text-anchor="middle">{name}</text>')
 
 
 def svg(theme_name: str) -> str:
@@ -79,12 +97,7 @@ def svg(theme_name: str) -> str:
         for x, y in pts:
             o.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="4" fill="{colour}" '
                      f'stroke="{t["surface"]}" stroke-width="2"/>')
-    # 100k sits close to 50k on a log axis; drop it rather than overlap.
-    for (p, *_), name in zip(CAPABILITY, LABELS):
-        if name == "100k":
-            continue
-        o.append(f'<text x="{lx(p, x0, w):.1f}" y="{y0+h+15}" fill="{t["ink2"]}" '
-                 f'font-size="9.5" text-anchor="middle">{name}</text>')
+    x_axis(o, t, x0, w, y0 + h)
 
     # ------------------------------------- panel 2: bits/char vs other models
     x0 = PANEL_W + 40 + 10
@@ -102,31 +115,39 @@ def svg(theme_name: str) -> str:
                  f'text-anchor="end">{v}</text>')
     pk = [r for r in ext if r["family"] == "PocketLM"]
     ts = [r for r in ext if r["family"] == "TinyStories"]
-    pts = [(lx(r["params"], x0, w), y0 + h - h * (r["dialogue"] - lo) / (hi - lo)) for r in pk]
-    d = " ".join(f"{'M' if i == 0 else 'L'}{x:.1f},{y:.1f}" for i, (x, y) in enumerate(pts))
-    o.append(f'<path d="{d}" fill="none" stroke="{t["s1"]}" stroke-width="2" '
-             f'stroke-linejoin="round"/>')
-    for (x, y), r in zip(pts, pk):
-        o.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="4" fill="{t["s1"]}" '
-                 f'stroke="{t["surface"]}" stroke-width="2"/>')
-    o.append(f'<text x="{pts[0][0]+8:.1f}" y="{pts[0][1]-8:.1f}" fill="{t["s1"]}" '
-             f'font-size="10" font-weight="600">PocketLM</text>')
-    for r in ts:
+
+    # Both families drawn identically -- same line, same markers -- on the same
+    # parameter axis as the left panel. An earlier version gave PocketLM a line
+    # and TinyStories two loose diamonds, which read as two different kinds of
+    # thing rather than two comparable trends.
+    lxp = x0 - 34
+    for label, colour in [("PocketLM", t["s1"]), ("TinyStories", t["s2"])]:
+        o.append(f'<rect x="{lxp}" y="26" width="9" height="9" rx="2" fill="{colour}"/>')
+        o.append(f'<text x="{lxp+13}" y="34" fill="{t["ink2"]}" font-size="10">{label}</text>')
+        lxp += 16 + len(label) * 5.4
+
+    for rows, colour in [(pk, t["s1"]), (ts, t["s2"])]:
+        pts = [(lx(r["params"], x0, w), y0 + h - h * (r["dialogue"] - lo) / (hi - lo))
+               for r in rows]
+        d = " ".join(f"{'M' if i == 0 else 'L'}{x:.1f},{y:.1f}"
+                     for i, (x, y) in enumerate(pts))
+        o.append(f'<path d="{d}" fill="none" stroke="{colour}" stroke-width="2" '
+                 f'stroke-linejoin="round" stroke-linecap="round"/>')
+        for x, y in pts:
+            o.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="4" fill="{colour}" '
+                     f'stroke="{t["surface"]}" stroke-width="2"/>')
+
+    # Label the two endpoints actually being compared, so the headline reads
+    # off the chart without measuring against the axis.
+    # Placed above the marks: to the side, the TinyStories value collided with
+    # its own second point.
+    for r, colour in [(pk[-1], t["s1"]), (ts[0], t["s2"])]:
         x = lx(r["params"], x0, w)
         y = y0 + h - h * (r["dialogue"] - lo) / (hi - lo)
-        o.append(f'<path d="M{x:.1f},{y-5:.1f} L{x+5:.1f},{y:.1f} L{x:.1f},{y+5:.1f} '
-                 f'L{x-5:.1f},{y:.1f} Z" fill="{t["s2"]}" stroke="{t["surface"]}" '
-                 f'stroke-width="2"/>')
-    tx = lx(ts[0]["params"], x0, w)
-    ty = y0 + h - h * (ts[0]["dialogue"] - lo) / (hi - lo)
-    o.append(f'<text x="{tx-4:.1f}" y="{ty+18:.1f}" fill="{t["s2"]}" font-size="10" '
-             f'font-weight="600" text-anchor="middle">TinyStories</text>')
-    for p, name in [(9584, "10k"), (95664, "100k"), (968320, "1m")]:
-        o.append(f'<text x="{lx(p, x0, w):.1f}" y="{y0+h+15}" fill="{t["ink2"]}" '
-                 f'font-size="9.5" text-anchor="middle">{name}</text>')
-    for r, name in zip(ts, ["1M", "3M"]):
-        o.append(f'<text x="{lx(r["params"], x0, w):.1f}" y="{y0+h+15}" '
-                 f'fill="{t["ink2"]}" font-size="9.5" text-anchor="middle">{name}</text>')
+        o.append(f'<text x="{x:.1f}" y="{y-11:.1f}" fill="{colour}" font-size="10" '
+                 f'font-weight="600" text-anchor="middle">{r["dialogue"]:.2f}</text>')
+
+    x_axis(o, t, x0, w, y0 + h)
 
     o.append("</svg>")
     return "\n".join(o)

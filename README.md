@@ -46,11 +46,14 @@ capability.
   </picture>
 </p>
 
-The right panel is **bits per character**, which compares models with different
-tokenizers fairly — perplexity would flatter whichever has the bigger
-vocabulary. Measured on the same text, `1m` scores **3.16** against
-TinyStories-1M's **2.80** while being **3.9x smaller** (968K parameters against
-3.7M). Reproduce with `python scripts/benchmark_external.py`.
+Both panels share one parameter axis, so the two families sit on the same
+scale. The right panel measures **bits per character** — perplexity is
+per-token and would flatter whichever model has the bigger vocabulary, while
+bits per character divides by characters and is invariant to tokenisation.
+
+On the same text, `1m` scores **3.16** against TinyStories-1M's **2.80** while
+being **3.9x smaller** — 968K parameters against 3.7M. Reproduce with
+`python scripts/benchmark_external.py`.
 
 > **Every model above ships in [`models/`](models/)** — 14 self-contained
 > `.npz` files, 4 MB total, each runnable with numpy alone:
