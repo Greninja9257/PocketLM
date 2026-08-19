@@ -51,29 +51,31 @@ scale. The right panel measures **bits per character** — perplexity is
 per-token and would flatter whichever model has the bigger vocabulary, while
 bits per character divides by characters and is invariant to tokenisation.
 
-Seven reference models, all downloaded and actually run — not quoted from
-papers:
+Ten PocketLM checkpoints across all three branches, plus seven reference models
+downloaded and actually run — not quoted from papers. Lower is better:
 
-| model | params | bits/char |
-|---|---|---|
-| **PocketLM-1m** | **0.97M** | **3.16** |
-| TinyLLama-v0 | 4.6M | 2.73 |
-| TinyStories-1M | 3.7M | 2.80 |
-| TinyStories-8M | 19.7M | 2.60 |
-| TinyStories-33M | 68.5M | 2.91 |
-| tinyllama-15M | 15.2M | 2.53 |
-| Pythia-70M | 70.4M | **1.52** |
+| model | params | dialogue | stories |
+|---|---|---|---|
+| `500k` real-data (dev) | **0.49M** | **1.30** | 2.21 |
+| Pythia-70M | 70.4M | 1.52 | 1.10 |
+| `50k` real-data (dev) | 0.05M | 2.06 | 2.43 |
+| tinyllama-15M | 15.2M | 2.53 | 0.41 |
+| TinyStories-8M | 19.7M | 2.60 | 0.42 |
+| TinyStories-1M | 3.7M | 2.80 | 0.63 |
+| `1m` (main) | 0.97M | 2.89 | 6.36 |
+| TinyStories-33M | 68.5M | 2.91 | 0.44 |
 
-`1m` lands within **13%** of the smallest reference model while being **3.9x
-smaller**. The story-trained models then flatten out around 2.5–2.9 no matter
-how much bigger they get — TinyStories-33M is *worse* on dialogue than
-TinyStories-8M, having spent 3.5x the parameters on a different domain.
-Pythia-70M is the honest ceiling here: a general-purpose LM at 70x the size,
-and it shows.
+**Each family wins on its own ground, and that is the point of showing both
+columns.** On dialogue, the dev-branch `500k` reaches **1.30 bits/char at 491K
+parameters** — better than Pythia-70M at **143x fewer parameters**. On stories,
+TinyStories-1M scores 0.63 where PocketLM's best is 2.21. Neither number means
+one model is simply better; it means dialogue is PocketLM's home domain and
+children's stories are TinyStories'.
 
-(Note the reference models are named for sizes they don't have —
-"TinyStories-1M" is 3.7M parameters — so the chart labels each mark with its
-true count.) Reproduce with `python scripts/benchmark_external.py`.
+Every token is charged, control tokens included: read as compression, bits per
+character is what it costs to transmit the text, and excusing `<user>` /
+`<assistant>` would hand PocketLM its turn boundaries for free while the
+raw-text models infer them from words alone.
 
 > **Every model above ships in [`models/`](models/)** — 14 self-contained
 > `.npz` files, 4 MB total, each runnable with numpy alone:

@@ -46,22 +46,47 @@ STORY = (
 )
 
 
-def dialogue_text(data_dir="data", limit=120):
-    rows, out = [], []
+def dialogue_turns(data_dir="data", limit=120):
+    """Held-out conversations, kept as turns so each model can frame them."""
     p = Path(data_dir) / "dialogue" / "val.jsonl"
-    for line in p.read_text().splitlines()[:limit]:
-        r = json.loads(line)
-        out.append(" ".join(t["text"] for t in r["turns"]))
-    return " ".join(out)
+    return [json.loads(l)["turns"] for l in p.read_text().splitlines()[:limit]]
+
+
+def flatten(turns):
+    return " ".join(t["text"] for conv in turns for t in conv)
 
 
 @torch.no_grad()
-def bpc_pocketlm(ckpt, text):
+def bpc_pocketlm(ckpt, turns):
+    """Bits per character for a PocketLM checkpoint.
+
+    The framing matters more than it looks. PocketLM is trained on
+    <bos><user>...<eos><assistant>...<eos>, and feeding it the same dialogue as
+    one raw string is out of distribution: it expects a control token and gets
+    a word, is confidently wrong, and scores *worse than uniform random* --
+    19.7 bits/token against a 8-bit ceiling for a 256-token vocabulary. That
+    measures the missing framing, not the model.
+
+    So each model gets its native format -- PocketLM sees the chat structure,
+    the raw-text models see raw text -- and **every token is charged**,
+    control tokens included.
+
+    Charging for them matters. Read as compression, bits per character is what
+    it costs to transmit the text, and PocketLM's format encodes the turn
+    boundaries: excusing <user>/<assistant> would hand it that structure for
+    free while TinyStories has to infer boundaries from words alone. Its
+    control tokens are cheap because they are predictable, which is the correct
+    outcome, not a free pass.
+    """
     from chat import load
     model, tok = load(ckpt, torch.device("cpu"))
-    ids = [tok.bos_id] + tok.encode(text)
+    ids = []
+    for conv in turns:
+        cid, _ = tok.encode_turns(conv)
+        ids.extend(cid)
+
     ctx = model.cfg.context_length
-    total_nll, n_pred = 0.0, 0
+    total_nll = 0.0
     for i in range(0, len(ids) - 1, ctx):
         chunk = ids[i:i + ctx + 1]
         if len(chunk) < 2:
@@ -69,11 +94,10 @@ def bpc_pocketlm(ckpt, text):
         x = torch.tensor([chunk[:-1]])
         y = torch.tensor([chunk[1:]])
         logits = model(x)
-        nll = torch.nn.functional.cross_entropy(
-            logits.reshape(-1, logits.size(-1)), y.reshape(-1), reduction="sum")
-        total_nll += float(nll)
-        n_pred += y.numel()
-    # Characters the tokenizer can actually represent (lowercase models fold case).
+        total_nll += float(torch.nn.functional.cross_entropy(
+            logits.reshape(-1, logits.size(-1)), y.reshape(-1), reduction="sum"))
+
+    text = " ".join(t["text"] for conv in turns for t in conv)
     chars = len(text.lower() if tok.lowercase else text)
     return total_nll / math.log(2) / chars
 
@@ -103,17 +127,38 @@ def main() -> None:
     ap.add_argument("--out", default="eval/results/external.json")
     args = ap.parse_args()
 
-    texts = {"dialogue": dialogue_text(), "stories": STORY}
-    print(f"dialogue sample: {len(texts['dialogue']):,} chars   "
-          f"stories sample: {len(texts['stories']):,} chars\n")
+    turns = dialogue_turns()
+    story_turns = [[{"role": "user", "text": STORY}]]
+    # PocketLM gets turns; raw-text models get the same content flattened.
+    native = {"dialogue": turns, "stories": story_turns}
+    raw = {"dialogue": flatten(turns), "stories": STORY}
+    print(f"dialogue sample: {len(raw['dialogue']):,} chars   "
+          f"stories sample: {len(raw['stories']):,} chars\n")
 
+    from config import FAMILY
+
+    # Every branch's models, so the chart can show what real data and a config
+    # search do to the same budgets.
+    LOCAL = [
+        ("PocketLM", "10k",  "checkpoints/10k.pt",   FAMILY["10k"].n_params()),
+        ("PocketLM", "50k",  "checkpoints/50k.pt",   FAMILY["50k"].n_params()),
+        ("PocketLM", "100k", "checkpoints/100k.pt",  FAMILY["100k"].n_params()),
+        ("PocketLM", "500k", "checkpoints/500k.pt",  FAMILY["500k"].n_params()),
+        ("PocketLM", "1m",   "checkpoints/1m.pt",    FAMILY["1m"].n_params()),
+        ("dev branch", "10k-real",  "dev/checkpoints/hybrid/10k-transformer.pt", 9_584),
+        ("dev branch", "50k-real",  "dev/checkpoints/50k-dev.pt",  48_416),
+        ("dev branch", "500k-real", "dev/checkpoints/500k-dev.pt", 491_040),
+        ("testing branch", "1k-best",  "testing/checkpoints/1k-best.pt",  984),
+        ("testing branch", "10k-best", "testing/checkpoints/10k-best.pt", 9_808),
+    ]
     results = []
-    for name in ["10k", "50k", "100k", "500k", "1m"]:
-        row = {"model": f"PocketLM-{name}", "family": "PocketLM"}
-        from config import FAMILY
-        row["params"] = FAMILY[name].n_params()
-        for domain, text in texts.items():
-            row[domain] = bpc_pocketlm(f"checkpoints/{name}.pt", text)
+    for family, name, ckpt, n in LOCAL:
+        if not Path(ckpt).exists():
+            print(f"  {name:<28} skipped: no checkpoint")
+            continue
+        row = {"model": f"PocketLM-{name}", "family": family, "params": n}
+        for domain, t in native.items():
+            row[domain] = bpc_pocketlm(ckpt, t)
         results.append(row)
         print(f"  {row['model']:<28}{row['params']:>11,}  "
               f"dialogue {row['dialogue']:.2f}  stories {row['stories']:.2f}")
@@ -121,7 +166,7 @@ def main() -> None:
     for mid, family in REFERENCE:
         row = {"model": mid.split("/")[-1], "family": family}
         try:
-            for domain, text in texts.items():
+            for domain, text in raw.items():
                 bpc, n = bpc_hf(mid, text)
                 row[domain], row["params"] = bpc, n
         except Exception as exc:

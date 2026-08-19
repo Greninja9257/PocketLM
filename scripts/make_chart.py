@@ -15,11 +15,17 @@ from pathlib import Path
 
 # Validated with the dataviz palette validator: worst adjacent CVD pair
 # ΔE 9.2 (light) / 9.4 (dark), normal-vision floor 27.6 / 26.5, both pass.
+# Five categorical slots, validated in both modes: worst adjacent CVD pair
+# dE 9.1 (light) / 8.4 (dark), normal-vision floor 19.6 / 19.3, both pass.
+# Light mode flags two slots below 3:1 against the surface, which the legend
+# labels and the README's table supply relief for.
 THEMES = {
     "light": dict(surface="#fcfcfb", ink="#0b0b0b", ink2="#52514e", grid="#e3e2df",
-                  s1="#2a78d6", s2="#eb6834", s3="#1baf7a", ref="#8a8985"),
+                  s1="#2a78d6", s2="#eb6834", s3="#1baf7a", s4="#eda100",
+                  s5="#e87ba4", ref="#8a8985"),
     "dark":  dict(surface="#1a1a19", ink="#ffffff", ink2="#c3c2b7", grid="#33322f",
-                  s1="#3987e5", s2="#d95926", s3="#199e70", ref="#8a8985"),
+                  s1="#3987e5", s2="#d95926", s3="#199e70", s4="#c98500",
+                  s5="#d55181", ref="#8a8985"),
 }
 
 CAPABILITY = [   # params, name_acc, ignorance, question_rate  (from eval/results)
@@ -28,8 +34,8 @@ CAPABILITY = [   # params, name_acc, ignorance, question_rate  (from eval/result
 ]
 LABELS = ["1k", "5k", "10k", "50k", "100k", "500k", "1m"]
 
-W, H = 880, 330
-PAD_L, PAD_R, PAD_T, PAD_B = 52, 16, 52, 46
+W, H = 880, 344
+PAD_L, PAD_R, PAD_T, PAD_B = 52, 16, 66, 46
 PANEL_W = (W - 40) // 2
 
 
@@ -45,6 +51,15 @@ DECADES = [(1e3, "1K"), (1e4, "10K"), (1e5, "100K"), (1e6, "1M"), (1e7, "10M"),
 
 def lx(p, x0, w, lo=AXIS_LO, hi=AXIS_HI):
     return x0 + w * (math.log10(p) - math.log10(lo)) / (math.log10(hi) - math.log10(lo))
+
+
+def fmt_params(n: int) -> str:
+    """984 as "0.00M" told the reader nothing; scale the unit to the number."""
+    if n >= 1e6:
+        return f"{n/1e6:.1f}M"
+    if n >= 1e3:
+        return f"{n/1e3:.0f}K"
+    return str(n)
 
 
 def legend_width(label: str) -> float:
@@ -141,11 +156,17 @@ def svg(theme_name: str) -> str:
     for rows in fam.values():
         rows.sort(key=lambda r: r["params"])
 
-    order = [("PocketLM", t["s1"]), ("TinyStories", t["s2"]), ("general LM", t["s3"])]
+    order = [("PocketLM", t["s1"]), ("dev branch", t["s2"]), ("testing branch", t["s3"]),
+             ("TinyStories", t["s4"]), ("general LM", t["s5"])]
     lxp = x0 - 34
-    for label, colour in order:
+    for label, colour in order[:3]:
         o.append(f'<rect x="{lxp}" y="26" width="9" height="9" rx="2" fill="{colour}"/>')
         o.append(f'<text x="{lxp+14}" y="34" fill="{t["ink2"]}" font-size="10">{label}</text>')
+        lxp += legend_width(label)
+    lxp = x0 - 34                                   # second legend row
+    for label, colour in order[3:]:
+        o.append(f'<rect x="{lxp}" y="40" width="9" height="9" rx="2" fill="{colour}"/>')
+        o.append(f'<text x="{lxp+14}" y="48" fill="{t["ink2"]}" font-size="10">{label}</text>')
         lxp += legend_width(label)
 
     for label, colour in order:
@@ -164,16 +185,19 @@ def svg(theme_name: str) -> str:
 
     # Label PocketLM's largest and the smallest reference model -- the two
     # points the headline comparison is between.
-    best = fam["PocketLM"][-1]
-    rival = min((r for r in ext if r["family"] != "PocketLM"), key=lambda r: r["params"])
+    # Label the best PocketLM result and the best reference result -- the two
+    # points the headline comparison is actually between.
+    ours = {"PocketLM", "dev branch", "testing branch"}
+    best = min((r for r in ext if r["family"] in ours), key=lambda r: r["dialogue"])
+    rival = min((r for r in ext if r["family"] not in ours), key=lambda r: r["dialogue"])
     # Stacked directly above each mark; offset sideways they landed on the lines.
-    for r, colour in [(best, t["s1"]), (rival, t["s2"])]:
+    for r, colour in [(best, t["s2"]), (rival, t["s5"])]:
         x = lx(r["params"], x0, w, REF_LO, REF_HI)
         y = y0 + h - h * (r["dialogue"] - lo) / (hi - lo)
         o.append(f'<text x="{x:.1f}" y="{y-22:.1f}" fill="{colour}" font-size="10" '
                  f'font-weight="600" text-anchor="middle">{r["dialogue"]:.2f}</text>')
         o.append(f'<text x="{x:.1f}" y="{y-11:.1f}" fill="{t["ink2"]}" font-size="9" '
-                 f'text-anchor="middle">{r["params"]/1e6:.2f}M</text>')
+                 f'text-anchor="middle">{fmt_params(r["params"])}</text>')
 
     x_axis(o, t, x0, w, y0 + h, REF_LO, REF_HI)
 
