@@ -341,6 +341,57 @@ and it is why `distinct2` carries no weight in the composite (see below).
 catastrophically forgets it. For a chatbot that is mostly harmless, but it does
 mean the 2,000 language steps buy less than they appear to.
 
+
+### Branch models on the same 900 prompts
+
+The `dev` and `testing` branches produce models too. Scored identically, and
+the result is not a clean story in either direction:
+
+| model | branch | params | composite | name_acc | ignorance | question | val ppl |
+|---|---|---|---|---|---|---|---|
+| `1k` | main | 984 | 0.226 | 0% | 0% | 47% | — |
+| **`1k-best`** | **testing** | 984 | **0.245** | 0% | 0% | **61%** | **8.08** |
+| `10k` | main | 9,584 | **0.408** | **51%** | **34%** | 56% | 1.51 |
+| `10k-best` | testing | 9,808 | 0.354 | 31% | 20% | **66%** | **1.31** |
+| `50k` | main | 48,416 | **0.352** | **54%** | 17% | 44% | — |
+| `50k-dev` | dev | 48,416 | 0.338 | 19% | **30%** | **50%** | — |
+| `500k` | main | 491,040 | **0.504** | **79%** | **69%** | 27% | — |
+| `500k-dev` | dev | 491,040 | 0.375 | 37% | 39% | **39%** | — |
+
+**The 1K search transfers.** `1k-best` beats the shipped 1K on the held-out
+prompts (0.245 vs 0.226), so the sweep found a genuinely better use of 984
+parameters, not just a lower loss.
+
+**The 10K search does not, and that is the most useful result here.**
+`10k-best` has clearly better perplexity — **1.31 against 1.51** — and a clearly
+worse chatbot (0.354 against 0.408), with name accuracy falling 51% → 31%.
+
+The cause is specific and worth knowing: the sweep chose `vocab=192`, which
+crosses below `LOWERCASE_BELOW_VOCAB = 256`. That folds case away and splits
+the assistant's own name across two tokens:
+
+```
+vocab 256:  'PocketLM' -> ['PocketLM']            1 token
+vocab 192:  'PocketLM' -> ['p', 'ocketlm']        2 tokens, case folded
+```
+
+**Perplexity could not see that.** Averaged over every assistant token, a name
+that costs one extra token is invisible; on a benchmark that asks "who are
+you?" a hundred times, it is most of the score. The sweep optimised the proxy
+faithfully and the proxy was wrong — a config search is only as good as the
+metric it ranks on, and validation loss is not the objective.
+
+`1k-best` escapes this only because the 1K model already uses a lowercase
+vocabulary, so shrinking 64 → 40 crosses no threshold.
+
+**The dev models look worse here, and the comparison is not fair to them.**
+This eval is built from the templated generator's distribution — held-out
+values and phrasings, but the same register. Models trained on 11 MB of real
+human dialogue are being scored out of domain. Their advantage shows up on the
+measurement they were built for, corrupted input, where `500k-dev` beats every
+template-trained model (42% against 31% on noisy identity questions). Read the
+two tables together rather than either alone.
+
 ### A metric that was wrong
 
 The composite originally weighted `echo_rate` and `distinct2` at 20% combined,

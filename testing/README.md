@@ -95,6 +95,35 @@ architecture for 4,000 and reaches **2.0498**, well below the sweep's best
 more than any architecture change tested here. Sweep numbers are therefore
 valid for *ranking* configs, not as absolute quality.
 
+### The 10K winner does not survive the real benchmark
+
+Scored on the project's 900 held-out prompts rather than validation loss, the
+sweep winner **loses**:
+
+| model | val ppl | composite | name_acc |
+|---|---|---|---|
+| shipped `v256-d16-L3-ff16` | 1.51 | **0.408** | **51%** |
+| sweep `v192-d16-L2-ff48` | **1.31** | 0.354 | 31% |
+
+Better perplexity, worse chatbot. The cause is that `vocab=192` crosses below
+`config.LOWERCASE_BELOW_VOCAB = 256`, which folds case away and splits the
+assistant's own name in two:
+
+```
+vocab 256:  'PocketLM' -> ['PocketLM']       1 token
+vocab 192:  'PocketLM' -> ['p', 'ocketlm']   2 tokens, case folded
+```
+
+Averaged across every assistant token, one extra token on one word is
+invisible to perplexity. On a benchmark that asks "who are you?" a hundred
+times it is most of the score.
+
+**The search was not wrong; the objective was.** Ranking by validation loss
+optimises exactly what it is told to. A useful next version of `sweep.py` would
+score candidates on the behavioural eval, or at minimum refuse to cross the
+lowercase threshold — the 1K search escaped this only because a 1K model is
+already below it, so shrinking 64 → 40 changes nothing.
+
 ---
 
 ## 2. Knowledge distillation — `testing/distill_kd.py` (negative result)
