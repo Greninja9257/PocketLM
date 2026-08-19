@@ -1,11 +1,18 @@
-# Training and evaluation
+# Core: training, evaluation and the shipped models.
 torch>=2.2
 numpy>=1.24
 
-# Optional, Apple Silicon only: ~1.6-1.9x faster training than PyTorch for
-# models this size. train.py picks it up automatically when present; without
-# it everything falls back to PyTorch with no change in results.
+# Apple Silicon only. ~1.6-1.9x faster training than PyTorch at these sizes;
+# train.py picks it up automatically when present and falls back cleanly when
+# it isn't, with identical results either way.
 mlx>=0.29 ; sys_platform == "darwin" and platform_machine == "arm64"
 
-# Optional: only needed for scripts/distill.py (teacher-generated data)
-# anthropic>=0.40
+# --- optional, per script -------------------------------------------------
+# Nothing below is needed to train a model or to run one.
+#
+#   transformers>=4.40   scripts/benchmark_external.py  (downloads reference
+#                                                        models to compare against)
+#   datasets>=2.18       dev/fetch_hf.py                (real dialogue corpora)
+#   anthropic>=0.40      scripts/distill.py             (teacher-generated data)
+#
+# Install only what you need, e.g.:  pip install transformers
