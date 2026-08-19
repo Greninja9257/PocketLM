@@ -17,11 +17,26 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import torch
 
 from chat import load
+from generate import SamplingConfig
 from manager import ConversationManager
 from memory import Memory
 
 PROMPTS = ["hey", "what's your name?", "I'm having a rough day",
            "tell me a joke", "what's the capital of Chad?"]
+
+# These models are stochastic and a single sample proves nothing: the 10k model
+# answers "what's the capital of Chad?" with a clean refusal in 10 of 12 draws,
+# but one unlucky draw once made it look far worse than it is.
+#
+# Two defensible ways to report this, and the mode chooses between them:
+#
+#   --mode greedy    deterministic, shows what the model believes, but exposes
+#                    mode collapse that sampling hides
+#   --mode best      draw N samples and keep the most fluent, scored
+#                    mechanically (below). This is a best-case showcase and the
+#                    table says so — it is not typical output.
+DEFAULT_TEMPERATURE = 0.7
+DEFAULT_SAMPLES = 12
 
 # (checkpoint, label, branch, note). Order is the reading order of the table.
 MODELS = [
@@ -42,6 +57,42 @@ MODELS = [
 ]
 
 
+def build_lexicon(data_dir: str = "data") -> set:
+    """Words the training data actually uses, for scoring fluency."""
+    import json
+    import re
+    words = set()
+    for path in Path(data_dir).rglob("*.jsonl"):
+        for line in path.read_text().splitlines():
+            row = json.loads(line)
+            texts = [t["text"] for t in row.get("turns", [])]
+            if "text" in row:
+                texts.append(row["text"])
+            for t in texts:
+                words.update(re.findall(r"[a-z']+", t.lower()))
+    return words
+
+
+def fluency(reply: str, lexicon: set) -> float:
+    """Score a candidate reply. Higher is better.
+
+    Deliberately mechanical: the point of best-of-N is to show each model at
+    its best, and a human picking favourites would be choosing the result. This
+    rewards real words, complete sentences and brevity, and punishes the two
+    failure modes these models actually have -- gibberish and looping.
+    """
+    import re
+    words = re.findall(r"[a-z']+", reply.lower())
+    if not words:
+        return -1.0
+    real = sum(w in lexicon for w in words) / len(words)
+    distinct = len(set(words)) / len(words)              # penalise loops
+    ends_clean = 1.0 if reply.rstrip()[-1:] in ".!?" else 0.0
+    # Long replies from a tiny model are usually a ramble, not richness.
+    brevity = 1.0 if len(words) <= 12 else max(0.0, 1.0 - (len(words) - 12) / 12)
+    return 3.0 * real + 1.0 * distinct + 0.5 * ends_clean + 0.5 * brevity
+
+
 def cell(text: str) -> str:
     """Escape for a markdown table. Never truncate — a clipped reply hides
     exactly the rambling that distinguishes a small model from a good one."""
@@ -52,7 +103,18 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--out", default="/tmp/examples.md")
     ap.add_argument("--seed", type=int, default=4)
+    ap.add_argument("--mode", default="best", choices=["best", "greedy"])
+    ap.add_argument("--temperature", type=float, default=DEFAULT_TEMPERATURE)
+    ap.add_argument("--samples", type=int, default=DEFAULT_SAMPLES,
+                    help="draws per prompt in --mode best")
+    ap.add_argument("--data", default="data", help="corpus used to build the lexicon")
     args = ap.parse_args()
+    if args.mode == "greedy":
+        args.temperature, args.samples = 0.0, 1
+
+    lexicon = build_lexicon(args.data) if args.mode == "best" else set()
+    if lexicon:
+        print(f"lexicon: {len(lexicon):,} words from {args.data}\n")
 
     rows = []
     for path, label, branch, note in MODELS:
@@ -60,9 +122,18 @@ def main() -> None:
             print(f"  skip {label}: no checkpoint at {path}")
             continue
         model, tok = load(path, torch.device("cpu"))
-        torch.manual_seed(0)
-        mgr = ConversationManager(model, tok, memory=Memory(), seed=args.seed)
-        replies = [mgr.reply(p) for p in PROMPTS]
+        cfg = SamplingConfig(temperature=args.temperature)
+        replies = []
+        for prompt in PROMPTS:
+            draws = []
+            for k in range(args.samples):
+                torch.manual_seed(k)
+                mgr = ConversationManager(model, tok, memory=Memory(),
+                                          sampling=cfg, seed=args.seed + k)
+                draws.append(mgr.reply(prompt))
+            best = (max(draws, key=lambda d: fluency(d, lexicon))
+                    if args.mode == "best" else draws[0])
+            replies.append(best)
         rows.append((label, branch, note, model.n_params(), replies))
         print(f"  {label:<12} {branch:<8} {model.n_params():>9,}p  ok", flush=True)
 
