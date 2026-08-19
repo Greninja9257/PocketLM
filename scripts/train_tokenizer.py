@@ -16,7 +16,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from config import LOWERCASE_BELOW_VOCAB, VOCAB_SIZES, tokenizer_path
+from config import (ASSISTANT_NAME, LOWERCASE_BELOW_VOCAB, VOCAB_SIZES,
+                    tokenizer_path)
 from tokenizer import BPETokenizer
 
 PROBE = "hey! what's your favorite color? I'm PocketLM."
@@ -41,6 +42,13 @@ def train_one(texts, chars, vocab_size: int, min_symbol_count: int, quiet: bool,
     tok = BPETokenizer.train(texts, vocab_size, min_symbol_count=min_symbol_count,
                              lowercase=lowercase, verbose=not quiet)
     out = str(Path(out_dir) / Path(tokenizer_path(vocab_size)).name)
+
+    # Validate BEFORE writing. Saving first left rejected tokenizers on disk,
+    # where a later run would find the file, report "already present", and
+    # happily train a model that cannot spell its own name.
+    if ASSISTANT_NAME.lower() not in tok.decode(tok.encode(ASSISTANT_NAME)).lower():
+        raise SystemExit(f"vocab {vocab_size} cannot represent {ASSISTANT_NAME!r} — "
+                         f"its alphabet is capped too hard; not saving")
     tok.save(out)
 
     n_tokens = sum(len(tok.encode(t)) for t in texts)
@@ -57,9 +65,6 @@ def train_one(texts, chars, vocab_size: int, min_symbol_count: int, quiet: bool,
     print(f"  probe -> {len(ids)} tokens, roundtrip {'ok' if ok else 'LOSSY'}")
     if not ok:
         print(f"    expected {expected!r}\n    got      {tok.decode(ids)!r}")
-    # The model has to be able to spell its own name.
-    assert "pocketlm" in tok.decode(tok.encode("PocketLM")).lower(), \
-        f"vocab {vocab_size} cannot represent 'PocketLM'"
     print(f"  saved -> {out}")
 
 
@@ -68,7 +73,7 @@ def main() -> None:
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--data", default="data")
     ap.add_argument("--out-dir", default="checkpoints",
-                    help="where to write the tokenizers (dev uses dev/checkpoints)")
+                    help="where to write tokenizers (branches use their own dir)")
     ap.add_argument("--vocab-size", type=int, default=None,
                     help="train just this one size (default: every size in the family)")
     ap.add_argument("--min-symbol-count", type=int, default=20)
