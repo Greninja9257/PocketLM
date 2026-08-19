@@ -175,6 +175,12 @@ VARIANTS: Dict[str, ModelConfig] = {
     "50k-hybrid": ModelConfig(name="50k-hybrid", arch="hybrid", budget=50_000,
                               vocab_size=512, d_model=32, gru_hidden=32, gru_layers=2,
                               n_heads=4, n_kv_heads=4, d_ff=128),
+    # 9,968 params — the same 10K budget as the transformer, so the bake-off
+    # measures architecture rather than size. 99.7% of budget used.
+    "10k-hybrid": ModelConfig(name="10k-hybrid", arch="hybrid", budget=10_000,
+                              vocab_size=256, context_length=128, d_model=16,
+                              gru_hidden=16, gru_layers=2, n_heads=2, n_kv_heads=2,
+                              d_ff=32),
 }
 
 PRESETS: Dict[str, ModelConfig] = {**FAMILY, **VARIANTS}

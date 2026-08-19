@@ -25,3 +25,8 @@ dev/__pycache__/
 # and is never committed or shared with main's working tree.
 dev/data/
 dev/checkpoints/
+
+# testing branch artefacts: same isolation rule as dev/
+testing/data/
+testing/checkpoints/
+testing/*.log
