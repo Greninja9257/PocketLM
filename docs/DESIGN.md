@@ -385,6 +385,7 @@ runtime_numpy.py   numpy-only inference
 scripts/build_corpus.py      bootstrap corpus generator
 scripts/train_tokenizer.py   BPE training, one tokenizer per vocab size
 scripts/distill.py           teacher-model distillation
+scripts/make_examples.py     runs one prompt set through every checkpoint
 
 eval/make_evalset.py   builds the 900 held-out prompts
 eval/evaluate.py       scoring + blind A/B
