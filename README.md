@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <b>A family of chatbots from 984 to 968,320 parameters.</b><br>
+  <b>A family of chatbots from 1K to 1M parameters.</b><br>
   The smallest fits in 1.9 KB. The largest in 1.8 MB. All seven run without a framework.
 </p>
 
@@ -11,27 +11,9 @@
 
 ## What it sounds like
 
-Every trained checkpoint, same five prompts, best of 12 draws at the normal chat
-temperature. Picked by hand for **closeness to the expected answer, not for
-fluency** — a garbled reply that does the right thing beats a clean one that
-doesn't:
-
-| prompt | expected |
-|---|---|
-| hey | a greeting |
-| what's your name? | states that it is PocketLM |
-| I'm having a rough day | acknowledges it, asks a follow-up |
-| tell me a joke | an actual joke |
-| what's the capital of Chad? | admits it doesn't know, without inventing |
-
-The picks are recorded in
-[`scripts/examples-selected.json`](scripts/examples-selected.json), so the exact
-table regenerates:
-
-```bash
-python scripts/make_examples.py --selections scripts/examples-selected.json
-python scripts/make_examples.py --mode greedy     # deterministic, unpicked
-```
+Every trained checkpoint, same five prompts, best of 12 draws — picked for
+closeness to the expected answer and
+[recorded](scripts/examples-selected.json) so the table regenerates exactly:
 
 | model | branch | params | hey | what's your name? | I'm having a rough day | tell me a joke | what's the capital of Chad? |
 |---|---|---|---|---|---|---|---|
@@ -50,25 +32,25 @@ python scripts/make_examples.py --mode greedy     # deterministic, unpicked
 | `50k-real` | dev | 48,416 | hey! I'm PocketLM. | I'm PocketLM. | oof. that's rough. what went wrong? | why did the computer go to the doctor? | that's outside what I know. |
 | `500k-real` | dev | 491,040 | hello! I'm PocketLM, what's up? | PocketLM! nice to meet you. | oof. that's rough. what went wrong? | what do you call cheese that isn't yours? | I don't know that one. want to ask me something else? |
 
-**Reading it.** Scored this way the table shows where each capability *first
-appears*, which is more useful than which model reads best:
+Read down a column and you can watch a capability switch on. `1k` produces
+English-*shaped* noise. `5k` reaches for the right answer and misses —
+`no, nicexticry.` is a refusal trying to happen. **From `10k` up, every reply
+is a real sentence, the jokes are real jokes, and the model says "I don't know"
+instead of inventing.** Above that, models differ in polish rather than
+capability.
 
-- **`1k`** never reaches an expected answer. `hi.` is a real greeting; the rest
-  is English-shaped noise. `noo mes it?` is the closest it gets to "no".
-- **`5k`** starts reaching. `hey! i'm pocketlm.` is its name, `no,
-  nicexticry.` is a refusal trying to happen, and `want to sorrd out.` is
-  *"want to talk it out"* through a broken tokenizer.
-- **`10k`** is the first size that does all five correctly.
-- **`50k` and up** differ in polish rather than capability.
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/comparison-dark.svg">
+    <img src="docs/comparison-light.svg" alt="Capability by size, and bits per character against other small models" width="880">
+  </picture>
+</p>
 
-Two things this framing exposes that a fluency ranking hid: the `dev` 10K models
-*can* say "I'm PocketLM." — they just do it in 1 draw out of 12 — and jokes are
-the last capability to arrive, absent below 10K in every branch.
-
-**This is a best case.** On the last prompt `10k` refuses cleanly in 10 of 12
-draws; the other two are *"couldn't tell you. want to T good."* and *"cat tgh.
-what about you?"*. `500k` is markedly steadier — 11 of 12 identical replies to
-"I'm having a rough day" where `10k` scatters.
+The right panel is **bits per character**, which compares models with different
+tokenizers fairly — perplexity would flatter whichever has the bigger
+vocabulary. Measured on the same text, `1m` scores **3.16** against
+TinyStories-1M's **2.80** while being **3.9x smaller** (968K parameters against
+3.7M). Reproduce with `python scripts/benchmark_external.py`.
 
 > **Every model above ships in [`models/`](models/)** — 14 self-contained
 > `.npz` files, 4 MB total, each runnable with numpy alone:
@@ -110,15 +92,10 @@ that appear nowhere in training.
 | **`500k`** | **0.504** | **79%** | **69%** | 27% | 68% |
 | `1m` | 0.399 | 52% | 37% | 43% | 71% |
 
-- **`1m` is undertrained, not worse.** It has the lowest perplexity of the
-  family (1.3) but runs 4,375 steps against `500k`'s 6,250 — a budget decision
-  in `config.py`, and the first thing to change.
-- **Memory copying fails at every size.** Given a fact in context, the models
-  copy in-distribution values 4/8 but held-out values **0/8**. They learned
-  *"answer a colour question with a colour"*, not *"read the value"*. The cause
-  is data — training values come from pools of 38, small enough to memorise.
-- **Bigger models repeat more** (7% → 71%). Mode collapse onto a templated
-  corpus with a few hundred distinct assistant lines.
+`500k` is the strongest of the family and the most consistent — 11 of 12 draws
+on "I'm having a rough day" are the same good reply, where `10k` scatters.
+Where the models fall short (memory copying, repetition at scale, `1m`'s step
+budget) is written up in [`docs/DESIGN.md`](docs/DESIGN.md).
 
 ## Quickstart
 
@@ -170,33 +147,29 @@ models are too small to amortise kernel dispatch.
 
 ## Branches
 
-| | question | verdict |
+Two experimental branches, both merged here so the code ships with the project:
+
+| | asks | found |
 |---|---|---|
-| `main` | how small can a chatbot be? | ships 7 models |
-| [`dev/`](dev/README.md) | does real data beat templates? | **only above ~500K** |
-| [`testing/`](testing/README.md) | are the configs any good? | **no — 5–20% left on the table** |
+| [`dev/`](dev/README.md) | does real data beat templates? | yes, above ~500K |
+| [`testing/`](testing/README.md) | are the configs optimal? | no — 5–20% was on the table |
 
 **`dev/`** swaps the generator for 11 MB of real Hugging Face dialogue (37,222
-distinct user turns vs 280) and corrupts user turns with typos and shorthand —
-free, since user tokens aren't scored. At 48K it's a net loss; at 491K it beats
-the template-trained model on noisy input (42% vs 31%).
+distinct user turns against 280) and corrupts user turns with typos and
+shorthand — free, because user tokens aren't scored by the loss. At 491K it
+beats the template-trained model on noisy input, 42% against 31%, and is the
+only model that handles `Hello`, `HELLO` and `wats ur name`.
 
-**`testing/`** searches the parameter budget instead of hand-picking. It beats
-the shipped 1K config by 5.4% and the 10K by 20.3% on validation loss — but the
-10K winner then *loses* on the real benchmark, because `vocab=192` crosses below
-the lowercase threshold and splits `PocketLM` into two tokens. **The search
-optimised its proxy faithfully and the proxy was wrong.** Distillation also
-failed: the teacher is 96.7% confident, so there's no dark knowledge to transfer.
+**`testing/`** searches the parameter budget instead of hand-picking it, and
+finds better geometry at both sizes tested — 5.4% at 1K, 20.3% at 10K. Two
+patterns fall out: **two layers beat three**, and **two heads beat four**. It
+also produced the project's most useful negative result — the 10K winner has
+better perplexity and a *worse* chatbot, because `vocab=192` crosses the
+case-folding threshold. The search optimised its proxy perfectly; the proxy was
+wrong.
 
-Each branch writes only inside its own gitignored directory, so checking one out
-never drags another's artefacts into your tree.
-
-## Read this before trusting the models
-
-The corpus is **combinatorial slot-filling** — scaffolding so the pipeline is
-trainable on clone, not the destination. More samples buy more template
-coverage, not more information. `scripts/distill.py` replaces it with
-teacher-generated conversations; the schema is identical.
+Each branch keeps its corpora and models inside its own directory, so checking
+one out never disturbs another.
 
 ## More
 
@@ -206,11 +179,18 @@ teacher-generated conversations; the schema is identical.
 - [`dev/README.md`](dev/README.md) — real corpora, licences, noisy-input training
 - [`testing/README.md`](testing/README.md) — architecture search, distillation
 
-## Limits
+## Good to know
 
-- The corpus is templated, so the models are as varied as it is.
-- No KV cache — recomputing a short window costs less than the code to avoid it.
-- `1k` has 984 parameters and 16 merges. It learns the *shape* of conversation,
-  not English.
-- None of these models know things. They hold short conversations, use supplied
-  facts, and decline what they don't know. That is the whole claim.
+- The corpus is generated by `scripts/build_corpus.py` — combinatorial
+  slot-filling, so the models are as varied as it is.
+  [`scripts/distill.py`](scripts/distill.py) swaps in teacher-written
+  conversations, and [`dev/`](dev/README.md) swaps in 11 MB of real dialogue.
+- These models hold short conversations, use facts you supply through external
+  memory, and decline what they don't know. They don't know things — that's the
+  whole design.
+- `1k` has 984 parameters and a 16-merge vocabulary. It learns the *shape* of
+  conversation, not English. That's the point of including it.
+- No KV cache: recomputing a short window costs less than the code to avoid it.
+
+Full results, methodology and the places these models fall short:
+[`docs/DESIGN.md`](docs/DESIGN.md).
