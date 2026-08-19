@@ -45,6 +45,11 @@ def lx(p, x0, w, lo=AXIS_LO, hi=AXIS_HI):
     return x0 + w * (math.log10(p) - math.log10(lo)) / (math.log10(hi) - math.log10(lo))
 
 
+def legend_width(label: str) -> float:
+    """Swatch + gap + text + separator, at 10px sans."""
+    return 9 + 5 + len(label) * 6.1 + 22
+
+
 def x_axis(o, t, x0, w, y):
     """Decade ticks, identical in both panels."""
     for value, name in DECADES:
@@ -84,8 +89,8 @@ def svg(theme_name: str) -> str:
     lxp = x0 - 34
     for label, idx, colour in series:
         o.append(f'<rect x="{lxp}" y="26" width="9" height="9" rx="2" fill="{colour}"/>')
-        o.append(f'<text x="{lxp+13}" y="34" fill="{t["ink2"]}" font-size="10">{label}</text>')
-        lxp += 16 + len(label) * 5.4
+        o.append(f'<text x="{lxp+14}" y="34" fill="{t["ink2"]}" font-size="10">{label}</text>')
+        lxp += legend_width(label)
     for label, idx, colour in series:
         pts = [(lx(p, x0, w), y0 + h - h * row[idx] / 100)
                for p, *rest in [(r[0], r) for r in CAPABILITY]
@@ -123,8 +128,8 @@ def svg(theme_name: str) -> str:
     lxp = x0 - 34
     for label, colour in [("PocketLM", t["s1"]), ("TinyStories", t["s2"])]:
         o.append(f'<rect x="{lxp}" y="26" width="9" height="9" rx="2" fill="{colour}"/>')
-        o.append(f'<text x="{lxp+13}" y="34" fill="{t["ink2"]}" font-size="10">{label}</text>')
-        lxp += 16 + len(label) * 5.4
+        o.append(f'<text x="{lxp+14}" y="34" fill="{t["ink2"]}" font-size="10">{label}</text>')
+        lxp += legend_width(label)
 
     for rows, colour in [(pk, t["s1"]), (ts, t["s2"])]:
         pts = [(lx(r["params"], x0, w), y0 + h - h * (r["dialogue"] - lo) / (hi - lo))
@@ -146,6 +151,15 @@ def svg(theme_name: str) -> str:
         y = y0 + h - h * (r["dialogue"] - lo) / (hi - lo)
         o.append(f'<text x="{x:.1f}" y="{y-11:.1f}" fill="{colour}" font-size="10" '
                  f'font-weight="600" text-anchor="middle">{r["dialogue"]:.2f}</text>')
+
+    # The reference models are named for a size they do not have --
+    # "TinyStories-1M" is 3.7M parameters -- so name each mark rather than let
+    # the reader assume the axis is wrong.
+    for r, name in zip(ts, ["TS-1M", "TS-3M"]):
+        x = lx(r["params"], x0, w)
+        y = y0 + h - h * (r["dialogue"] - lo) / (hi - lo)
+        o.append(f'<text x="{x:.1f}" y="{y+18:.1f}" fill="{t["ink2"]}" font-size="9" '
+                 f'text-anchor="middle">{name}</text>')
 
     x_axis(o, t, x0, w, y0 + h)
 

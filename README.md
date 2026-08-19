@@ -52,8 +52,9 @@ per-token and would flatter whichever model has the bigger vocabulary, while
 bits per character divides by characters and is invariant to tokenisation.
 
 On the same text, `1m` scores **3.16** against TinyStories-1M's **2.80** while
-being **3.9x smaller** — 968K parameters against 3.7M. Reproduce with
-`python scripts/benchmark_external.py`.
+being **3.9x smaller**. (The TinyStories models are named for a size they don't
+have — "TinyStories-1M" is 3,745,984 parameters — which is why they plot to the
+right of the 1M tick.) Reproduce with `python scripts/benchmark_external.py`.
 
 > **Every model above ships in [`models/`](models/)** — 14 self-contained
 > `.npz` files, 4 MB total, each runnable with numpy alone:
