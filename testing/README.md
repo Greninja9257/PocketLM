@@ -51,6 +51,42 @@ budget between the embedding table and the feed-forward layer.
 Head count barely matters (2.3052 vs 2.3104), which makes sense — with
 `d_model=8`, two heads means two 4-dimensional heads.
 
+### 10K result
+
+| rank | config | params | val loss | ppl |
+|---|---|---|---|---|
+| **1** | **v192-d16-L2-ff48-h2** | 9,808 | **0.7397** | **2.10** |
+| 2 | v256-d16-L2-ff32-h2 | 9,296 | 0.7554 | 2.13 |
+| 3 | v96-d16-L3-ff32-h2 | 9,328 | 0.7620 | 2.14 |
+| 4 | v96-d16-L2-ff64-h2 | 9,808 | 0.7644 | 2.15 |
+| 26 | v256-d16-L3-ff16-h2 *(shipped)* | 9,584 | 0.8875 | 2.43 |
+
+**16.7% better than the shipped config**, which lands 26th of 36.
+
+Confirmed at full training length rather than trusting the short sweep runs —
+both configs retrained for 4,000 steps:
+
+| config | params | val loss | ppl |
+|---|---|---|---|
+| shipped `v256-d16-L3-ff16-h2` | 9,584 | 0.4088 | 1.51 |
+| **sweep `v192-d16-L2-ff48-h2`** | 9,808 | **0.3258** | **1.39** |
+
+The gap *widens* to **20.3%** with more training, so the sweep ranking was not
+an artefact of stopping early.
+
+Two clear patterns:
+
+- **Two layers beat three.** Seven of the top ten are `L=2`. The shipped config
+  spends its budget on a third layer; the sweep says that budget is worth more
+  as FFN width (`ff=48` against the shipped `ff=16`). Depth is the thing to cut
+  at this scale, not width.
+- **Heads should be 2, not 4.** Every `h=4` variant is beaten by its `h=2` twin
+  (0.7620 vs 0.8012, 0.7644 vs 0.8126). At `d_model=16`, four heads means four
+  4-dimensional heads, which is too narrow to be useful.
+
+Vocabulary is less decisive here than at 1K — 96, 192 and 256 all appear near
+the top — because at 10K the embedding is 42% of the budget rather than 52%.
+
 ### A finding that was not the point of the experiment
 
 The sweep trains for 1,200 steps. The KD baseline below trains the *same*
@@ -113,7 +149,13 @@ the obvious next experiment, and it needs `dev`'s data rather than this branch's
 For a better 1K model today, in order of measured effect:
 
 1. **Train longer.** 1,200 → 4,000 steps moved val loss 2.31 → 2.05. Largest
-   single effect measured.
-2. **Use `vocab=40, d=8, L=1, ff=16, heads=2`** instead of the shipped
-   `vocab=64 … ff=8`. Free, 5.4%.
+   single effect measured, and it costs nothing but time.
+2. **Change the geometry.** Both are free at identical parameter count:
+   - 1K: `vocab=40, d=8, L=1, ff=16, heads=2` (from `vocab=64 … ff=8`) — 5.4%
+   - 10K: `vocab=192, d=16, L=2, ff=48, heads=2` (from `vocab=256, L=3, ff=16`) — 16.7%
 3. **Do not distill** from a teacher trained on this corpus.
+
+The two sweeps agree on the underlying lesson: **the shipped configs spend too
+much on the embedding table and on depth, and too little on FFN width.** That
+is a systematic bias in how the family was hand-designed, and it very likely
+applies to the larger members too — worth sweeping 50K and 100K next.

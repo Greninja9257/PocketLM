@@ -1,0 +1,686 @@
+[
+ {
+  "config": {
+   "name": "v192-d16-L2-ff48-h2",
+   "arch": "transformer",
+   "vocab_size": 192,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 2,
+   "n_heads": 2,
+   "n_kv_heads": 2,
+   "d_ff": 48,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9808,
+  "val_loss": 0.73968545794487
+ },
+ {
+  "config": {
+   "name": "v256-d16-L2-ff32-h2",
+   "arch": "transformer",
+   "vocab_size": 256,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 2,
+   "n_heads": 2,
+   "n_kv_heads": 2,
+   "d_ff": 32,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9296,
+  "val_loss": 0.7553562223911285
+ },
+ {
+  "config": {
+   "name": "v96-d16-L3-ff32-h2",
+   "arch": "transformer",
+   "vocab_size": 96,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 3,
+   "n_heads": 2,
+   "n_kv_heads": 2,
+   "d_ff": 32,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9328,
+  "val_loss": 0.7620166420936585
+ },
+ {
+  "config": {
+   "name": "v96-d16-L2-ff64-h2",
+   "arch": "transformer",
+   "vocab_size": 96,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 2,
+   "n_heads": 2,
+   "n_kv_heads": 2,
+   "d_ff": 64,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9808,
+  "val_loss": 0.7644021719694137
+ },
+ {
+  "config": {
+   "name": "v128-d16-L3-ff32-h2",
+   "arch": "transformer",
+   "vocab_size": 128,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 3,
+   "n_heads": 2,
+   "n_kv_heads": 2,
+   "d_ff": 32,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9840,
+  "val_loss": 0.7749753028154374
+ },
+ {
+  "config": {
+   "name": "v96-d24-L2-ff16-h2",
+   "arch": "transformer",
+   "vocab_size": 96,
+   "context_length": 128,
+   "d_model": 24,
+   "n_layers": 2,
+   "n_heads": 2,
+   "n_kv_heads": 2,
+   "d_ff": 16,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9336,
+  "val_loss": 0.7802228957414628
+ },
+ {
+  "config": {
+   "name": "v160-d16-L2-ff48-h2",
+   "arch": "transformer",
+   "vocab_size": 160,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 2,
+   "n_heads": 2,
+   "n_kv_heads": 2,
+   "d_ff": 48,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9296,
+  "val_loss": 0.7943710833787918
+ },
+ {
+  "config": {
+   "name": "v96-d16-L3-ff32-h4",
+   "arch": "transformer",
+   "vocab_size": 96,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 3,
+   "n_heads": 4,
+   "n_kv_heads": 4,
+   "d_ff": 32,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9328,
+  "val_loss": 0.8011868953704834
+ },
+ {
+  "config": {
+   "name": "v192-d16-L3-ff24-h2",
+   "arch": "transformer",
+   "vocab_size": 192,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 3,
+   "n_heads": 2,
+   "n_kv_heads": 2,
+   "d_ff": 24,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9712,
+  "val_loss": 0.8076371997594833
+ },
+ {
+  "config": {
+   "name": "v96-d16-L2-ff64-h4",
+   "arch": "transformer",
+   "vocab_size": 96,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 2,
+   "n_heads": 4,
+   "n_kv_heads": 4,
+   "d_ff": 64,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9808,
+  "val_loss": 0.8125587344169617
+ },
+ {
+  "config": {
+   "name": "v320-d16-L2-ff24-h2",
+   "arch": "transformer",
+   "vocab_size": 320,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 2,
+   "n_heads": 2,
+   "n_kv_heads": 2,
+   "d_ff": 24,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9552,
+  "val_loss": 0.8264807879924774
+ },
+ {
+  "config": {
+   "name": "v160-d16-L3-ff24-h2",
+   "arch": "transformer",
+   "vocab_size": 160,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 3,
+   "n_heads": 2,
+   "n_kv_heads": 2,
+   "d_ff": 24,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9200,
+  "val_loss": 0.8267974704504013
+ },
+ {
+  "config": {
+   "name": "v96-d16-L2-ff56-h2",
+   "arch": "transformer",
+   "vocab_size": 96,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 2,
+   "n_heads": 2,
+   "n_kv_heads": 2,
+   "d_ff": 56,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9040,
+  "val_loss": 0.831477627158165
+ },
+ {
+  "config": {
+   "name": "v160-d16-L4-ff16-h2",
+   "arch": "transformer",
+   "vocab_size": 160,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 4,
+   "n_heads": 2,
+   "n_kv_heads": 2,
+   "d_ff": 16,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9872,
+  "val_loss": 0.83492211997509
+ },
+ {
+  "config": {
+   "name": "v128-d16-L3-ff32-h4",
+   "arch": "transformer",
+   "vocab_size": 128,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 3,
+   "n_heads": 4,
+   "n_kv_heads": 4,
+   "d_ff": 32,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9840,
+  "val_loss": 0.8375756949186325
+ },
+ {
+  "config": {
+   "name": "v256-d16-L2-ff32-h4",
+   "arch": "transformer",
+   "vocab_size": 256,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 2,
+   "n_heads": 4,
+   "n_kv_heads": 4,
+   "d_ff": 32,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9296,
+  "val_loss": 0.8674603849649429
+ },
+ {
+  "config": {
+   "name": "v160-d16-L2-ff48-h4",
+   "arch": "transformer",
+   "vocab_size": 160,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 2,
+   "n_heads": 4,
+   "n_kv_heads": 4,
+   "d_ff": 48,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9296,
+  "val_loss": 0.8688636124134064
+ },
+ {
+  "config": {
+   "name": "v96-d16-L2-ff56-h4",
+   "arch": "transformer",
+   "vocab_size": 96,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 2,
+   "n_heads": 4,
+   "n_kv_heads": 4,
+   "d_ff": 56,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9040,
+  "val_loss": 0.8719752877950668
+ },
+ {
+  "config": {
+   "name": "v96-d16-L4-ff16-h2",
+   "arch": "transformer",
+   "vocab_size": 96,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 4,
+   "n_heads": 2,
+   "n_kv_heads": 2,
+   "d_ff": 16,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 8848,
+  "val_loss": 0.8732775062322616
+ },
+ {
+  "config": {
+   "name": "v96-d24-L2-ff16-h4",
+   "arch": "transformer",
+   "vocab_size": 96,
+   "context_length": 128,
+   "d_model": 24,
+   "n_layers": 2,
+   "n_heads": 4,
+   "n_kv_heads": 4,
+   "d_ff": 16,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9336,
+  "val_loss": 0.8746879458427429
+ },
+ {
+  "config": {
+   "name": "v192-d16-L2-ff40-h4",
+   "arch": "transformer",
+   "vocab_size": 192,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 2,
+   "n_heads": 4,
+   "n_kv_heads": 4,
+   "d_ff": 40,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9040,
+  "val_loss": 0.8752801835536956
+ },
+ {
+  "config": {
+   "name": "v192-d16-L3-ff24-h4",
+   "arch": "transformer",
+   "vocab_size": 192,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 3,
+   "n_heads": 4,
+   "n_kv_heads": 4,
+   "d_ff": 24,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9712,
+  "val_loss": 0.8757927745580674
+ },
+ {
+  "config": {
+   "name": "v192-d16-L2-ff40-h2",
+   "arch": "transformer",
+   "vocab_size": 192,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 2,
+   "n_heads": 2,
+   "n_kv_heads": 2,
+   "d_ff": 40,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9040,
+  "val_loss": 0.8821423411369324
+ },
+ {
+  "config": {
+   "name": "v320-d16-L2-ff24-h4",
+   "arch": "transformer",
+   "vocab_size": 320,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 2,
+   "n_heads": 4,
+   "n_kv_heads": 4,
+   "d_ff": 24,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9552,
+  "val_loss": 0.8829243749380111
+ },
+ {
+  "config": {
+   "name": "v160-d16-L4-ff16-h4",
+   "arch": "transformer",
+   "vocab_size": 160,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 4,
+   "n_heads": 4,
+   "n_kv_heads": 4,
+   "d_ff": 16,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9872,
+  "val_loss": 0.8835464805364609
+ },
+ {
+  "config": {
+   "name": "v256-d16-L3-ff16-h2",
+   "arch": "transformer",
+   "vocab_size": 256,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 3,
+   "n_heads": 2,
+   "n_kv_heads": 2,
+   "d_ff": 16,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9584,
+  "val_loss": 0.8875412464141845
+ },
+ {
+  "config": {
+   "name": "v128-d16-L2-ff56-h2",
+   "arch": "transformer",
+   "vocab_size": 128,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 2,
+   "n_heads": 2,
+   "n_kv_heads": 2,
+   "d_ff": 56,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9552,
+  "val_loss": 0.9018611282110214
+ },
+ {
+  "config": {
+   "name": "v384-d16-L2-ff16-h2",
+   "arch": "transformer",
+   "vocab_size": 384,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 2,
+   "n_heads": 2,
+   "n_kv_heads": 2,
+   "d_ff": 16,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9808,
+  "val_loss": 0.9024537861347198
+ },
+ {
+  "config": {
+   "name": "v160-d16-L3-ff24-h4",
+   "arch": "transformer",
+   "vocab_size": 160,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 3,
+   "n_heads": 4,
+   "n_kv_heads": 4,
+   "d_ff": 24,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9200,
+  "val_loss": 0.9036822319030762
+ },
+ {
+  "config": {
+   "name": "v192-d16-L2-ff48-h4",
+   "arch": "transformer",
+   "vocab_size": 192,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 2,
+   "n_heads": 4,
+   "n_kv_heads": 4,
+   "d_ff": 48,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9808,
+  "val_loss": 0.9099592357873917
+ },
+ {
+  "config": {
+   "name": "v128-d16-L4-ff16-h2",
+   "arch": "transformer",
+   "vocab_size": 128,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 4,
+   "n_heads": 2,
+   "n_kv_heads": 2,
+   "d_ff": 16,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9360,
+  "val_loss": 0.9359148889780045
+ },
+ {
+  "config": {
+   "name": "v384-d16-L2-ff16-h4",
+   "arch": "transformer",
+   "vocab_size": 384,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 2,
+   "n_heads": 4,
+   "n_kv_heads": 4,
+   "d_ff": 16,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9808,
+  "val_loss": 0.9848852813243866
+ },
+ {
+  "config": {
+   "name": "v96-d16-L4-ff16-h4",
+   "arch": "transformer",
+   "vocab_size": 96,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 4,
+   "n_heads": 4,
+   "n_kv_heads": 4,
+   "d_ff": 16,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 8848,
+  "val_loss": 0.9989443778991699
+ },
+ {
+  "config": {
+   "name": "v128-d16-L2-ff56-h4",
+   "arch": "transformer",
+   "vocab_size": 128,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 2,
+   "n_heads": 4,
+   "n_kv_heads": 4,
+   "d_ff": 56,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9552,
+  "val_loss": 1.024382907152176
+ },
+ {
+  "config": {
+   "name": "v128-d16-L4-ff16-h4",
+   "arch": "transformer",
+   "vocab_size": 128,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 4,
+   "n_heads": 4,
+   "n_kv_heads": 4,
+   "d_ff": 16,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9360,
+  "val_loss": 1.059148558974266
+ },
+ {
+  "config": {
+   "name": "v256-d16-L3-ff16-h4",
+   "arch": "transformer",
+   "vocab_size": 256,
+   "context_length": 128,
+   "d_model": 16,
+   "n_layers": 3,
+   "n_heads": 4,
+   "n_kv_heads": 4,
+   "d_ff": 16,
+   "gru_hidden": 32,
+   "gru_layers": 2,
+   "rope_theta": 10000.0,
+   "budget": 10000
+  },
+  "params": 9584,
+  "val_loss": 1.0779893517494201
+ }
+]
