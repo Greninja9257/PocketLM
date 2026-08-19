@@ -51,11 +51,29 @@ scale. The right panel measures **bits per character** — perplexity is
 per-token and would flatter whichever model has the bigger vocabulary, while
 bits per character divides by characters and is invariant to tokenisation.
 
-On the same text, `1m` scores **3.16** against TinyStories-1M's **2.80** while
-being **3.9x smaller**. Each mark is labelled with its true parameter count,
-because the TinyStories models are named for a size they don't have —
-"TinyStories-1M" is 3.7M parameters, not 1M. Reproduce with
-`python scripts/benchmark_external.py`.
+Seven reference models, all downloaded and actually run — not quoted from
+papers:
+
+| model | params | bits/char |
+|---|---|---|
+| **PocketLM-1m** | **0.97M** | **3.16** |
+| TinyLLama-v0 | 4.6M | 2.73 |
+| TinyStories-1M | 3.7M | 2.80 |
+| TinyStories-8M | 19.7M | 2.60 |
+| TinyStories-33M | 68.5M | 2.91 |
+| tinyllama-15M | 15.2M | 2.53 |
+| Pythia-70M | 70.4M | **1.52** |
+
+`1m` lands within **13%** of the smallest reference model while being **3.9x
+smaller**. The story-trained models then flatten out around 2.5–2.9 no matter
+how much bigger they get — TinyStories-33M is *worse* on dialogue than
+TinyStories-8M, having spent 3.5x the parameters on a different domain.
+Pythia-70M is the honest ceiling here: a general-purpose LM at 70x the size,
+and it shows.
+
+(Note the reference models are named for sizes they don't have —
+"TinyStories-1M" is 3.7M parameters — so the chart labels each mark with its
+true count.) Reproduce with `python scripts/benchmark_external.py`.
 
 > **Every model above ships in [`models/`](models/)** — 14 self-contained
 > `.npz` files, 4 MB total, each runnable with numpy alone:

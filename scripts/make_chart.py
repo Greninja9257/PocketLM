@@ -37,8 +37,10 @@ PANEL_W = (W - 40) // 2
 # was a mistake: PocketLM's "1m" (968K) and TinyStories-1M (3.7M) landed at two
 # different x positions while reading as the same number. Ticks are decades of
 # actual parameters; model identity belongs to the marks, not the axis.
-AXIS_LO, AXIS_HI = 800, 1.2e7
-DECADES = [(1e3, "1K"), (1e4, "10K"), (1e5, "100K"), (1e6, "1M"), (1e7, "10M")]
+AXIS_LO, AXIS_HI = 800, 1.4e6            # left panel: PocketLM only
+REF_LO, REF_HI = 800, 1.4e8              # right panel: reaches the reference models
+DECADES = [(1e3, "1K"), (1e4, "10K"), (1e5, "100K"), (1e6, "1M"), (1e7, "10M"),
+           (1e8, "100M")]
 
 
 def lx(p, x0, w, lo=AXIS_LO, hi=AXIS_HI):
@@ -50,7 +52,7 @@ def legend_width(label: str) -> float:
     return 9 + 5 + len(label) * 6.1 + 22
 
 
-def x_axis(o, t, x0, w, y):
+def x_axis(o, t, x0, w, y, lo=AXIS_LO, hi=AXIS_HI):
     """Decade ticks plus minor ticks, identical in both panels.
 
     The minor ticks are the point: without them a log axis invites being read
@@ -60,13 +62,15 @@ def x_axis(o, t, x0, w, y):
     for value, _ in DECADES:
         for k in range(2, 10):                      # 2x .. 9x within the decade
             minor = value * k
-            if not (AXIS_LO < minor < AXIS_HI):
+            if not (lo < minor < hi):
                 continue
-            x = lx(minor, x0, w)
+            x = lx(minor, x0, w, lo, hi)
             o.append(f'<line x1="{x:.1f}" y1="{y}" x2="{x:.1f}" y2="{y+2.5}" '
                      f'stroke="{t["grid"]}" stroke-width="1"/>')
     for value, name in DECADES:
-        x = lx(value, x0, w)
+        if not (lo <= value <= hi):
+            continue
+        x = lx(value, x0, w, lo, hi)
         o.append(f'<line x1="{x:.1f}" y1="{y}" x2="{x:.1f}" y2="{y+5}" '
                  f'stroke="{t["ink2"]}" stroke-width="1"/>')
         o.append(f'<text x="{x:.1f}" y="{y+17}" fill="{t["ink2"]}" font-size="9.5" '
@@ -124,29 +128,32 @@ def svg(theme_name: str) -> str:
              f'font-weight="600">Bits per character vs other small models</text>')
     o.append(f'<text x="{x0-34}" y="{H-10}" fill="{t["ink2"]}" font-size="10">'
              f'parameters (log scale) · lower is better · same text, any tokenizer</text>')
-    lo, hi = 2.0, 10.0
+    lo, hi = 1.0, 10.0
     for v in (2, 4, 6, 8, 10):
         y = y0 + h - h * (v - lo) / (hi - lo)
         o.append(f'<line x1="{x0}" y1="{y:.1f}" x2="{x0+w}" y2="{y:.1f}" '
                  f'stroke="{t["grid"]}" stroke-width="1"/>')
         o.append(f'<text x="{x0-8}" y="{y+3.5:.1f}" fill="{t["ink2"]}" font-size="10" '
                  f'text-anchor="end">{v}</text>')
-    pk = [r for r in ext if r["family"] == "PocketLM"]
-    ts = [r for r in ext if r["family"] == "TinyStories"]
+    fam = {}
+    for r in ext:
+        fam.setdefault(r["family"], []).append(r)
+    for rows in fam.values():
+        rows.sort(key=lambda r: r["params"])
 
-    # Both families drawn identically -- same line, same markers -- on the same
-    # parameter axis as the left panel. An earlier version gave PocketLM a line
-    # and TinyStories two loose diamonds, which read as two different kinds of
-    # thing rather than two comparable trends.
+    order = [("PocketLM", t["s1"]), ("TinyStories", t["s2"]), ("general LM", t["s3"])]
     lxp = x0 - 34
-    for label, colour in [("PocketLM", t["s1"]), ("TinyStories", t["s2"])]:
+    for label, colour in order:
         o.append(f'<rect x="{lxp}" y="26" width="9" height="9" rx="2" fill="{colour}"/>')
         o.append(f'<text x="{lxp+14}" y="34" fill="{t["ink2"]}" font-size="10">{label}</text>')
         lxp += legend_width(label)
 
-    for rows, colour in [(pk, t["s1"]), (ts, t["s2"])]:
-        pts = [(lx(r["params"], x0, w), y0 + h - h * (r["dialogue"] - lo) / (hi - lo))
-               for r in rows]
+    for label, colour in order:
+        rows = fam.get(label, [])
+        if not rows:
+            continue
+        pts = [(lx(r["params"], x0, w, REF_LO, REF_HI),
+                y0 + h - h * (r["dialogue"] - lo) / (hi - lo)) for r in rows]
         d = " ".join(f"{'M' if i == 0 else 'L'}{x:.1f},{y:.1f}"
                      for i, (x, y) in enumerate(pts))
         o.append(f'<path d="{d}" fill="none" stroke="{colour}" stroke-width="2" '
@@ -155,32 +162,20 @@ def svg(theme_name: str) -> str:
             o.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="4" fill="{colour}" '
                      f'stroke="{t["surface"]}" stroke-width="2"/>')
 
-    # Label the two endpoints actually being compared, so the headline reads
-    # off the chart without measuring against the axis.
-    # Placed above the marks: to the side, the TinyStories value collided with
-    # its own second point.
-    for r, colour in [(pk[-1], t["s1"]), (ts[0], t["s2"])]:
-        x = lx(r["params"], x0, w)
+    # Label PocketLM's largest and the smallest reference model -- the two
+    # points the headline comparison is between.
+    best = fam["PocketLM"][-1]
+    rival = min((r for r in ext if r["family"] != "PocketLM"), key=lambda r: r["params"])
+    # Stacked directly above each mark; offset sideways they landed on the lines.
+    for r, colour in [(best, t["s1"]), (rival, t["s2"])]:
+        x = lx(r["params"], x0, w, REF_LO, REF_HI)
         y = y0 + h - h * (r["dialogue"] - lo) / (hi - lo)
-        o.append(f'<text x="{x:.1f}" y="{y-11:.1f}" fill="{colour}" font-size="10" '
+        o.append(f'<text x="{x:.1f}" y="{y-22:.1f}" fill="{colour}" font-size="10" '
                  f'font-weight="600" text-anchor="middle">{r["dialogue"]:.2f}</text>')
+        o.append(f'<text x="{x:.1f}" y="{y-11:.1f}" fill="{t["ink2"]}" font-size="9" '
+                 f'text-anchor="middle">{r["params"]/1e6:.2f}M</text>')
 
-    # Marks carry their true parameter count. The models' own names disagree
-    # with it -- "TinyStories-1M" is 3.7M parameters -- and labelling the name
-    # made the axis look wrong.
-    for r, name in zip(ts, ["TinyStories-1M", "TinyStories-3M"]):
-        x = lx(r["params"], x0, w)
-        y = y0 + h - h * (r["dialogue"] - lo) / (hi - lo)
-        o.append(f'<text x="{x:.1f}" y="{y+17:.1f}" fill="{t["ink2"]}" font-size="9" '
-                 f'text-anchor="middle">{r["params"]/1e6:.1f}M</text>')
-
-    # PocketLM's largest, labelled the same way for comparison.
-    x = lx(pk[-1]["params"], x0, w)
-    y = y0 + h - h * (pk[-1]["dialogue"] - lo) / (hi - lo)
-    o.append(f'<text x="{x:.1f}" y="{y+17:.1f}" fill="{t["ink2"]}" font-size="9" '
-             f'text-anchor="middle">0.97M</text>')
-
-    x_axis(o, t, x0, w, y0 + h)
+    x_axis(o, t, x0, w, y0 + h, REF_LO, REF_HI)
 
     o.append("</svg>")
     return "\n".join(o)

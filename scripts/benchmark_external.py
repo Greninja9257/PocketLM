@@ -6,10 +6,10 @@ so a model with a bigger vocabulary looks better for free. **Bits per character*
 is the fix — total negative log-likelihood divided by the number of characters,
 which is invariant to how the text was split.
 
-Reference models are the TinyStories family, the closest well-known point of
-comparison at this scale. Note they are trained on synthetic children's stories
-and PocketLM on dialogue, so each is measured on both domains rather than only
-the one that flatters it.
+Reference models span two kinds: the TinyStories family (small models trained
+on synthetic children's stories) and general-purpose LMs at the small end
+(TinyLlama, Pythia). PocketLM is trained on dialogue, so every model is measured
+on both domains rather than only the one that flatters it.
 """
 
 import argparse
@@ -24,7 +24,17 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import torch
 
-REFERENCE = ["roneneldan/TinyStories-1M", "roneneldan/TinyStories-3M"]
+# (model id, family). Families become series on the chart, so the grouping is
+# by what a model is for: story models, general-purpose LMs, and PocketLM.
+REFERENCE = [
+    ("roneneldan/TinyStories-1M",  "TinyStories"),
+    ("roneneldan/TinyStories-3M",  "TinyStories"),
+    ("roneneldan/TinyStories-8M",  "TinyStories"),
+    ("roneneldan/TinyStories-33M", "TinyStories"),
+    ("Maykeye/TinyLLama-v0",       "general LM"),
+    ("nickypro/tinyllama-15M",     "general LM"),
+    ("EleutherAI/pythia-70m",      "general LM"),
+]
 
 STORY = (
     "Once upon a time there was a little girl named Lily. She liked to play "
@@ -105,16 +115,20 @@ def main() -> None:
         for domain, text in texts.items():
             row[domain] = bpc_pocketlm(f"checkpoints/{name}.pt", text)
         results.append(row)
-        print(f"  {row['model']:<18}{row['params']:>10,}  "
+        print(f"  {row['model']:<28}{row['params']:>11,}  "
               f"dialogue {row['dialogue']:.2f}  stories {row['stories']:.2f}")
 
-    for mid in REFERENCE:
-        row = {"model": mid.split("/")[-1], "family": "TinyStories"}
-        for domain, text in texts.items():
-            bpc, n = bpc_hf(mid, text)
-            row[domain], row["params"] = bpc, n
+    for mid, family in REFERENCE:
+        row = {"model": mid.split("/")[-1], "family": family}
+        try:
+            for domain, text in texts.items():
+                bpc, n = bpc_hf(mid, text)
+                row[domain], row["params"] = bpc, n
+        except Exception as exc:
+            print(f"  {mid:<28} skipped: {str(exc)[:60]}")
+            continue
         results.append(row)
-        print(f"  {row['model']:<18}{row['params']:>10,}  "
+        print(f"  {row['model']:<28}{row['params']:>11,}  "
               f"dialogue {row['dialogue']:.2f}  stories {row['stories']:.2f}")
 
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
